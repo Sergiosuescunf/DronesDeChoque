@@ -1,15 +1,15 @@
 GutHub: https://sergiosuescun@bitbucket.org/rovitlib/dronesdechoque.git
 Versión de Unity: 2021.3.30f1
-Versión de python3.7.9
+Versión de python3.7.9 (Debería funcionar con otras)
 
 Hay que crearse un entorno virtual:
 - Situearse en terminal en el repositiorio
-- ejecutar python3.7 -m venv venv
+- ejecutar: python3.7 -m venv venv
 - ejecutar: venv\Scripts\activate.bat
 - actualizar pip: python -m pip install --upgrade pip
 - instalar tensorflow: pip install tensorflow
 - instalar opencv: pip install opencv-python
-- instalar ml-agents: pip install ml-agents (Esto va a instalar numpy)
+- instalar ml-agents: pip install mlagents (Esto va a instalar numpy)
 - Listo :)
 - (Esto es lo básico del simulador, el dron real necesita más librerías)
 

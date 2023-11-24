@@ -1,14 +1,13 @@
 import random
 import numpy as np
-import cv2
-import time
-import math
-import os
-
 import mlagents
-from mlagents_envs.environment import UnityEnvironment
 
 import tensorflow as tf
+import math
+import os
+import time
+
+from mlagents_envs.environment import UnityEnvironment
 from tensorflow import keras
 from keras import models, layers
 
@@ -524,13 +523,23 @@ def MostrarPoblacion():
         print("Mostrando epoca: " + str(Epoca + 1))
         EntrenarPoblacion(env, behavior_name, spec)
 
+def CrearDirectorio():
+
+    path = ""
+    for folder_path in directorio.split("/"):
+        path += folder_path+"/"
+        if not os.path.exists(f"{path}"):
+            os.makedirs(f"{path}")
+
 def Comienzo():
     
     global EpocaPartida
     EpocaPartida = 0
     
     global directorio
-    directorio = "Elite/P1/"
+    directorio = "Elite/Experimento1/"
+
+    CrearDirectorio()
     CargarMapa()
     #MostrarPoblacion()
     Entrenar()

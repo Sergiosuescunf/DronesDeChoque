@@ -1,24 +1,15 @@
 import random
 import numpy as np
 import mlagents
-import keyboard 
-
-import math
-import os
-
-from mlagents_envs.environment import UnityEnvironment
-
-import cv2
-import numpy as np
-import time
 
 import tensorflow as tf
+import math
+import os
+import time
+
+from mlagents_envs.environment import UnityEnvironment
 from tensorflow import keras
 from keras import models, layers
-
-import random
-import numpy as np
-import mlagents
 
 #Atrivutos de puntuacion
 NumSectores = 2 
@@ -521,15 +512,23 @@ def MostrarPoblacion():
         print("Mostrando epoca: " + str(Epoca + 1))
         EntrenarPoblacion(env, behavior_name, spec)
 
+def CrearDirectorio():
+
+    path = ""
+    for folder_path in directorio.split("/"):
+        path += folder_path+"/"
+        if not os.path.exists(f"{path}"):
+            os.makedirs(f"{path}")
 
 def Comienzo():
     
     global EpocaPartida
-    EpocaPartida = 30
+    EpocaPartida = 0
     
     global directorio
-    directorio = "Elite/NormFinal/"
+    directorio = "Elite/Experimento1/"
     
+    CrearDirectorio()
     CargarMapa()
     #MostrarPoblacion()
     Entrenar()

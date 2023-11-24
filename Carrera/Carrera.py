@@ -5,6 +5,7 @@ import mlagents
 import tensorflow as tf
 import math
 import os
+import time
 
 from mlagents_envs.environment import UnityEnvironment
 from tensorflow import keras
@@ -432,15 +433,26 @@ def Experimentos():
     MaxPM = 0.15
     MaxIM = 0.1
     
-    directorio = "Elite/Experimento1/"
     Entrenar()
+
+def CrearDirectorio():
+
+    path = ""
+    for folder_path in directorio.split("/"):
+        path += folder_path+"/"
+        if not os.path.exists(f"{path}"):
+            os.makedirs(f"{path}")
 
 def Comienzo():
     
     global directorio
     global EpocaPartida
+
+    directorio = "Elite/Experimento1/"
     EpocaPartida = 0
     
+    CrearDirectorio()
+
     EstablecerMarcas()
     EstablecerDistancias()
     
