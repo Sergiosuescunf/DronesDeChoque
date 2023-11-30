@@ -11,6 +11,16 @@ from mlagents_envs.environment import UnityEnvironment
 from tensorflow import keras
 from keras import models, layers
 
+
+so = os.name
+
+if so == 'posix':
+    FILE_NAME = 'CasaEntreno.x86_64'
+    CLEAR_COMMAND = 'clear'
+elif so == 'nt':
+    FILE_NAME = 'CasaEntreno.exe'
+    CLEAR_COMMAND = 'cls'
+
 #Atrivutos de puntuacion
 NumZonas = 0
 ZonasPunt = 50
@@ -52,13 +62,15 @@ Chocados = []
 directorio = ""
 
 #Modelo
-def modelo():
+def modelo(n_actions=4):
     
     bias_init = tf.keras.initializers.he_uniform()
     funct_atc = tf.nn.relu
+
+    n_inputs = 78 + n_actions*4
   
     model = models.Sequential()
-    model.add(layers.Dense(16, input_shape = (78,), bias_initializer=bias_init, activation = funct_atc)) # type: ignore
+    model.add(layers.Dense(16, input_shape = (n_inputs,), bias_initializer=bias_init, activation = funct_atc)) # type: ignore
     model.add(layers.Dense(8, bias_initializer=bias_init, activation = funct_atc)) # type: ignore
     model.add(layers.Dense(4, bias_initializer=bias_init, activation = tf.nn.tanh)) # type: ignore
 
@@ -157,7 +169,7 @@ def SelecElite():
                 pos = i
         aux.append(pos)
         
-    os.system('cls')
+    os.system(CLEAR_COMMAND)
             
     for x in aux:
         print("Coche:", x, end=" ")
@@ -271,7 +283,7 @@ def Normalizar(Laseres):
     return Laseres
 
 #Entrena una población
-def EntrenarPoblacion(env, behavior_name, spec):
+def EntrenarPoblacion(env, behavior_name, spec, n_actions=4):
 
     if(Epoca < 39):
         auxMS = (MaxSteps - 200)//40
@@ -288,6 +300,11 @@ def EntrenarPoblacion(env, behavior_name, spec):
     env.reset()
     decision_steps, terminal_steps = env.get_steps(behavior_name)
     action = spec.action_spec.random_action(len(decision_steps))
+
+    # Inicializar el historial de acciones para cada agente
+    historial_acciones = {id: [np.zeros(4, dtype=np.float32) for _ in range(n_actions)] for id in range(TamPoblacion)}
+
+    pred = np.array([0, 0, 0, 0], dtype = np.float32)
     
     done = False 
     while not done:
@@ -310,10 +327,20 @@ def EntrenarPoblacion(env, behavior_name, spec):
                 if(normalizar):
                     Laseres = Normalizar(Laseres)
                 Laseres = np.concatenate((Laseres, altura), axis=1)
-                Tensor = tf.constant(Laseres)
+
+                historial_aplanado = np.concatenate([accion.flatten() for accion in historial_acciones[id]])
+                entrada_red = np.concatenate([Laseres.flatten(), historial_aplanado])
+                entrada_red = entrada_red.reshape(1, -1)
+                Tensor = tf.constant(entrada_red)
                 
                 pred = Modelos[id].call(Tensor, training=None, mask=None)
+                pred_array = pred.numpy().flatten()
+
+                if len(historial_acciones[id]) >= n_actions:
+                    historial_acciones[id].pop(0)  # Eliminar la acción más antigua si ya tenemos n acciones
                 
+                historial_acciones[id].append(pred_array)  # Añadir la nueva acción
+
                 estado = decision_steps[id][0][8]
                 posX = estado[0]
                 posZ = estado[2]
@@ -332,6 +359,7 @@ def EntrenarPoblacion(env, behavior_name, spec):
             else:
                 pred = np.array([[0, 0, 0, 0]], dtype = np.float32)
             
+
             """
             if(Chocados[id] == 1 and Sectores[id] == NumZonas - 1):
                 Chocados[id] = 0
@@ -352,6 +380,8 @@ def EntrenarPoblacion(env, behavior_name, spec):
             else:
                 pred = np.concatenate((pred, np.array([[0]])), axis=1)
             
+            
+
             if len(Movimientos[0]) == 0:
                 Movimientos = pred
             else:
@@ -423,7 +453,7 @@ def Entrenar():
         CargarElite(aux)
         NuevaGeneracion()
         
-    env = UnityEnvironment(file_name="CasaEntreno", seed=1, side_channels=[])
+    env = UnityEnvironment(file_name=FILE_NAME, seed=1, no_graphics=True, side_channels=[])
     env.reset()
     time.sleep(5)
 
@@ -471,8 +501,10 @@ def MostrarPoblacion():
     aux = "Generacion" + str(1)
     CargarElite(aux)
     NuevaGeneracion()
-        
-    env = UnityEnvironment(file_name="CasaEntreno", seed=1, side_channels=[])
+
+
+    
+    env = UnityEnvironment(file_name=FILE_NAME, seed=1, side_channels=[])
     env.reset()
     
     time.sleep(5)
