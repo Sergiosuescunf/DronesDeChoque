@@ -68,6 +68,13 @@ def modelo(n_actions=4):
     funct_atc = tf.nn.relu
 
     n_inputs = 78 + n_actions*4
+    # n_intermediate_inputs =  n_inputs/2
+    # n_intermediate_inputs_2 = n_intermediate_inputs/2 
+  
+    # model = models.Sequential()
+    # model.add(layers.Dense(n_intermediate_inputs, input_shape = (n_inputs,), bias_initializer=bias_init, activation = funct_atc)) # type: ignore
+    # model.add(layers.Dense(n_intermediate_inputs_2, bias_initializer=bias_init, activation = funct_atc)) # type: ignore
+    # model.add(layers.Dense(4, bias_initializer=bias_init, activation = tf.nn.tanh)) # type: ignore
   
     model = models.Sequential()
     model.add(layers.Dense(16, input_shape = (n_inputs,), bias_initializer=bias_init, activation = funct_atc)) # type: ignore
@@ -379,8 +386,6 @@ def EntrenarPoblacion(env, behavior_name, spec, n_actions=4):
                 pred = np.concatenate((pred, np.array([[0.3]])), axis=1)    
             else:
                 pred = np.concatenate((pred, np.array([[0]])), axis=1)
-            
-            
 
             if len(Movimientos[0]) == 0:
                 Movimientos = pred
@@ -399,7 +404,7 @@ def EntrenarPoblacion(env, behavior_name, spec, n_actions=4):
                 if(mejorPunt < Puntuaciones[i] and Chocados[i] == 1):
                     mejorPunt = Puntuaciones[i]
                     mejor = i
-            print("Paso: " + str(steps) + " \t| Chocados: " + str(NumChocados) + "\t| Mejor Punt: " + "%.2f" % mejorPunt + "\t| Mejor Zona: " + str(DronesZona[mejor]))
+            print("Paso: " + str(steps) + " \t| Chocados: " + str(NumChocados) + "\t|Mejor Dron: " + str(mejor) + "\t|Mejor Punt: " + "%.2f" % mejorPunt + "\t| Mejor Zona: " + str(DronesZona[mejor]))
             
         steps = steps + 1
         
