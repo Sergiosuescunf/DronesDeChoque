@@ -8,6 +8,8 @@ import os
 import time
 
 from mlagents_envs.environment import UnityEnvironment
+from mlagents_envs.side_channel.engine_configuration_channel import EngineConfigurationChannel
+
 from tensorflow import keras
 from keras import models, layers
 
@@ -21,15 +23,17 @@ elif so == 'nt':
     FILE_NAME = 'CasaEntreno.exe'
     CLEAR_COMMAND = 'cls'
 
-#Atrivutos de puntuacion
+#Atributos de puntuacion
 NumZonas = 0
 ZonasPunt = 50
 Penalizacion = 40
+Penalizacion_cercania = 20
+Distancia_maxima = 0.3
 SectorVis = []
 DronesZona = [] 
 Zonas = [] 
 
-#Variiables Poblacion
+#Variables Poblacion
 TamPoblacion = 100 
 TamElite = 10
 Epoca = 0
@@ -50,7 +54,7 @@ IncrIM = 0.2 #Incremento del índice de mutacion
 MaxPM = .25
 MaxIM = 0.2
 
-#Atrivutos Poblacion
+#Atributos Poblacion
 Modelos = []
 Elite = []
 Puntuaciones = [] 
@@ -133,6 +137,23 @@ def CalcularPunt(id, x, z):
         if((auxX, auxZ) not in list):
             list.append((auxX, auxZ))
             Puntuaciones[id] += 1
+
+def Penalizacion(distancia):
+    return -Penalizacion_cercania * (Distancia_maxima - distancia)/Distancia_maxima 
+
+def CalcularPenalizacionDistancia(id, dist_cent, dist_izq, dist_der):
+
+    if dist_cent <= Distancia_maxima:
+        pen_cent = Penalizacion(dist_cent)
+        Puntuaciones[id] += pen_cent
+
+    if dist_izq <= Distancia_maxima:
+        pen_izq = Penalizacion(dist_izq)
+        Puntuaciones[id] += pen_izq
+
+    if dist_der <= Distancia_maxima:
+        pen_der = Penalizacion(dist_der)
+        Puntuaciones[id] += pen_der
 
 #Genera una nueva poblacion desde 0
 def NuevaPoblacion():
@@ -353,6 +374,12 @@ def EntrenarPoblacion(env, behavior_name, spec, n_actions=4):
                 posZ = estado[2]
                 
                 CalcularPunt(id, posX, posZ)
+
+                dist_cent = decision_steps[id][0][8][1]
+                dist_izq = decision_steps[id][0][8][3]
+                dist_der = decision_steps[id][0][8][5]
+
+                CalcularPenalizacionDistancia(id, dist_cent, dist_izq, dist_der)
                 
                 if(Chocados[id] == 0):
                     NumChocados += 1
@@ -404,7 +431,7 @@ def EntrenarPoblacion(env, behavior_name, spec, n_actions=4):
                 if(mejorPunt < Puntuaciones[i] and Chocados[i] == 1):
                     mejorPunt = Puntuaciones[i]
                     mejor = i
-            print("Paso: " + str(steps) + " \t| Chocados: " + str(NumChocados) + "\t|Mejor Dron: " + str(mejor) + "\t|Mejor Punt: " + "%.2f" % mejorPunt + "\t| Mejor Zona: " + str(DronesZona[mejor]))
+            print("Paso: " + str(steps) + " \t| Chocados: " + str(NumChocados) + "\t|Mejor Dron: " + str(mejor) + "\t|Punt del Mejor : " + "%.2f" % mejorPunt + "\t| Zona del Mejor: " + str(DronesZona[mejor]))
             
         steps = steps + 1
         
@@ -421,7 +448,7 @@ def EntrenarPoblacion(env, behavior_name, spec, n_actions=4):
                 auxMP = mejorPunt
         """
 
-def AjustarMuatciones():
+def AjustarMutaciones():
     
     global PuntActual
     global PuntPasada
@@ -457,8 +484,11 @@ def Entrenar():
         aux = "Generacion" + str(EpocaPartida)
         CargarElite(aux)
         NuevaGeneracion()
+
+    channel = EngineConfigurationChannel()
+    channel.set_configuration_parameters(height=1024, width=1024)
         
-    env = UnityEnvironment(file_name=FILE_NAME, seed=1, no_graphics=True, side_channels=[])
+    env = UnityEnvironment(file_name=FILE_NAME, seed=1, no_graphics=True, side_channels=[channel])
     env.reset()
     time.sleep(5)
 
@@ -479,7 +509,7 @@ def Entrenar():
             print("PuntActual:", PuntActual, ", PuntPasada:", PuntPasada) 
             #print("ProbMuta:", ProbMuta, ", IndiceMuta:", IndiceMuta)
             if(AjustMutacion):
-                AjustarMuatciones()
+                AjustarMutaciones()
             GuardarDatos()
             GuardarElite('Generacion' + str(Epoca))
             if(PuntActual > 0):

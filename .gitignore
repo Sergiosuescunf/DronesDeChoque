@@ -1,6 +1,8 @@
 /venv/
 \venv\
 *.h5
-
+**/*_BurstDebugInformation_DoNotShip/*
+**/*_Data/*
+**/MonoBleedingEdge/*
 
 
