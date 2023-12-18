@@ -211,11 +211,10 @@ def EntrenarPoblacion(env, behavior_name, spec, n_actions=4):
 
                 historial_aplanado = np.concatenate([accion.flatten() for accion in historial_acciones[id]])
                 entrada_red = np.concatenate([Laseres.flatten(), historial_aplanado])
-                entrada_red = entrada_red.reshape(1, -1)
-                Tensor = tf.constant(entrada_red)
                 
-                pred = Modelos[id].prediction(Tensor)
-                pred_array = pred.numpy().flatten()
+                pred = Modelos[id].prediction(entrada_red)
+                pred = np.array([pred], dtype = np.float32)
+                pred_array = pred.flatten()
 
                 if len(historial_acciones[id]) >= n_actions:
                     historial_acciones[id].pop(0)  # Eliminar la acción más antigua si ya tenemos n acciones
@@ -295,9 +294,35 @@ def EntrenarPoblacion(env, behavior_name, spec, n_actions=4):
                 auxMP = mejorPunt
         """
 
-def assign_rewards(genomes):
-    for i, (_, genome) in enumerate(genomes):
-        genome.fitness = Puntuaciones[i]
+def assign_rewards(genomes, config):
+    # Asegurarse de que no hay más de 100 genomas
+    if len(genomes) > TamPoblacion:
+        print('Poniendo a 0')
+        print('*************************************************')
+        # Asignar recompensas a los primeros 100 genomas
+        for i, (_, genome) in enumerate(genomes[:TamPoblacion]):
+            genome.fitness = Puntuaciones[i]
+        # Asignar una recompensa de 0 a los genomas sobrantes
+        for i in range(TamPoblacion, len(genomes)):
+            genomes[i][1].fitness = 0
+    # Si hay menos de 100 genomas, duplicar los genomas existentes hasta llegar a 100
+    elif len(genomes) < TamPoblacion:
+        print('Duplicando')
+        print('*************************************************')
+        for i, (_, genome) in enumerate(genomes):
+            genome.fitness = Puntuaciones[i]
+        # Clonar genomas hasta llegar a 100
+        while len(genomes) < TamPoblacion:
+            for i, (genome_id, genome) in enumerate(genomes):
+                if len(genomes) >= TamPoblacion:
+                    break
+                clone = genome
+                clone.fitness = 0
+                genomes.append((len(genomes), clone))
+    # Si hay exactamente 100 genomas, asignar las recompensas normalmente
+    else:
+        for i, (_, genome) in enumerate(genomes):
+            genome.fitness = Puntuaciones[i]
 
 def Entrenar():
     
