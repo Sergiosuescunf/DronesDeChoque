@@ -8,12 +8,12 @@ import math
 import os
 import time
 
+from concurrent.futures import ThreadPoolExecutor
 from neat.checkpoint import Checkpointer
 from mlagents_envs.environment import UnityEnvironment
 from tensorflow import keras
 from keras import models, layers
 from Dron import *
-
 
 so = os.name
 
@@ -33,8 +33,8 @@ DronesZona = []
 Zonas = [] 
 
 #Variiables Poblacion
-TamPoblacion = 100 
-TamElite = 10
+TamPoblacion = 1000 
+TamElite = 20
 Epoca = 0
 EpocaPartida = 0
 MaxEpocas = 50
@@ -57,8 +57,6 @@ MaxIM = 0.2
 Modelos = []
 Elite = []
 Puntuaciones = [] 
-PuntActual = 0
-PuntPasada = 0
 Chocados = []
 
 #Directorio de guardado
@@ -163,6 +161,77 @@ def Normalizar(Laseres):
         
     return Laseres
 
+def procesar_agente(id, decision_steps, steps, Chocados, NumChocados, mejor, camara, historial_acciones, n_actions):
+    print(id)
+    if(Chocados == 1):
+        
+        Laseres = np.atleast_2d([])
+        
+        for i in range(7):
+            laser = decision_steps[0][i]
+            lectura = np.atleast_2d([laser[21], laser[17], laser[13], laser[9], laser[5], laser[1], laser[3], laser[7], laser[11], laser[15], laser[19]])
+            Laseres  = np.concatenate((Laseres, lectura), axis=1)
+        
+        altura = np.atleast_2d([decision_steps[0][7][1]])
+        if(normalizar):
+            Laseres = Normalizar(Laseres)
+        Laseres = np.concatenate((Laseres, altura), axis=1)
+
+        historial_aplanado = np.concatenate([accion.flatten() for accion in historial_acciones])
+        entrada_red = np.concatenate([Laseres.flatten(), historial_aplanado])
+        
+        pred = Modelos.prediction(entrada_red)
+        pred = np.array([pred], dtype = np.float32)
+        pred_array = pred.flatten()
+
+        if len(historial_acciones) >= n_actions:
+            historial_acciones.pop(0)  # Eliminar la acción más antigua si ya tenemos n acciones
+        
+        historial_acciones.append(pred_array)  # Añadir la nueva acción
+
+        estado = decision_steps[0][8]
+        posX = estado[0]
+        posZ = estado[2]
+        
+        CalcularPunt(id, posX, posZ)
+        
+        if(Chocados == 0):
+            NumChocados += 1
+        
+        if estado[3] == 0:
+            Chocados = 0
+            if(Puntuaciones > 0):
+                Puntuaciones -= Penalizacion
+            NumChocados = NumChocados + 1
+            
+    else:
+        pred = np.array([[0, 0, 0, 0]], dtype = np.float32)
+    
+
+    """
+    if(Chocados == 1 and Sectores == NumZonas - 1):
+        Chocados = 0
+        Puntuaciones += (MaxSteps - steps)/100
+        NumMeta = NumMeta + 1
+        pred = np.concatenate((pred, np.array([[0.4]])), axis=1) 
+    """    
+    
+    if(Chocados == 0):
+        pred = np.concatenate((pred, np.array([[0.1]])), axis=1)
+    elif(id == 0 and steps < 11):
+        pred = np.concatenate((pred, np.array([[0.2]])), axis=1)
+    elif(Chocados[camara] == 0 and id == mejor):
+        pred = np.concatenate((pred, np.array([[0.2]])), axis=1)
+        camara = id
+    elif(id < TamElite):
+        pred = np.concatenate((pred, np.array([[0.3]])), axis=1)    
+    else:
+        pred = np.concatenate((pred, np.array([[0]])), axis=1)
+
+    return id, pred
+
+
+
 #Entrena una población
 def EntrenarPoblacion(env, behavior_name, spec, n_actions=4):
 
@@ -189,83 +258,14 @@ def EntrenarPoblacion(env, behavior_name, spec, n_actions=4):
     
     done = False 
     while not done:
-        
         decision_steps, terminal_steps = env.get_steps(behavior_name)
-        Movimientos = [[]]
-        
-        for id in decision_steps.agent_id:
-                
-            if(Chocados[id] == 1):
-                
-                Laseres = np.atleast_2d([])
-                
-                for i in range(7):
-                    laser = decision_steps[id][0][i]
-                    lectura = np.atleast_2d([laser[21], laser[17], laser[13], laser[9], laser[5], laser[1], laser[3], laser[7], laser[11], laser[15], laser[19]])
-                    Laseres  = np.concatenate((Laseres, lectura), axis=1)
-                
-                altura = np.atleast_2d([decision_steps[id][0][7][1]])
-                if(normalizar):
-                    Laseres = Normalizar(Laseres)
-                Laseres = np.concatenate((Laseres, altura), axis=1)
+        Movimientos = np.zeros((TamPoblacion, 5))
+         # Crear un pool de hilos y distribuir el trabajo
+        with ThreadPoolExecutor(max_workers=24) as executor:
+            for (id, result) in executor.map(procesar_agente, decision_steps.agent_id, decision_steps, steps, NumChocados, mejor, camara, historial_acciones, n_actions):
+                # report the result
+                Movimientos[id] = result    
 
-                historial_aplanado = np.concatenate([accion.flatten() for accion in historial_acciones[id]])
-                entrada_red = np.concatenate([Laseres.flatten(), historial_aplanado])
-                
-                pred = Modelos[id].prediction(entrada_red)
-                pred = np.array([pred], dtype = np.float32)
-                pred_array = pred.flatten()
-
-                if len(historial_acciones[id]) >= n_actions:
-                    historial_acciones[id].pop(0)  # Eliminar la acción más antigua si ya tenemos n acciones
-                
-                historial_acciones[id].append(pred_array)  # Añadir la nueva acción
-
-                estado = decision_steps[id][0][8]
-                posX = estado[0]
-                posZ = estado[2]
-                
-                CalcularPunt(id, posX, posZ)
-                
-                if(Chocados[id] == 0):
-                    NumChocados += 1
-                
-                if estado[3] == 0:
-                    Chocados[id] = 0
-                    if(Puntuaciones[id] > 0):
-                        Puntuaciones[id] -= Penalizacion
-                    NumChocados = NumChocados + 1
-                    
-            else:
-                pred = np.array([[0, 0, 0, 0]], dtype = np.float32)
-            
-
-            """
-            if(Chocados[id] == 1 and Sectores[id] == NumZonas - 1):
-                Chocados[id] = 0
-                Puntuaciones[id] += (MaxSteps - steps)/100
-                NumMeta = NumMeta + 1
-                pred = np.concatenate((pred, np.array([[0.4]])), axis=1) 
-            """    
-            
-            if(Chocados[id] == 0):
-                pred = np.concatenate((pred, np.array([[0.1]])), axis=1)
-            elif(id == 0 and steps < 11):
-                pred = np.concatenate((pred, np.array([[0.2]])), axis=1)
-            elif(Chocados[camara] == 0 and id == mejor):
-                pred = np.concatenate((pred, np.array([[0.2]])), axis=1)
-                camara = id
-            elif(id < TamElite):
-                pred = np.concatenate((pred, np.array([[0.3]])), axis=1)    
-            else:
-                pred = np.concatenate((pred, np.array([[0]])), axis=1)
-
-            if len(Movimientos[0]) == 0:
-                Movimientos = pred
-            else:
-                nuevoMovimiento = pred
-                Movimientos = np.concatenate((Movimientos, nuevoMovimiento), axis=0)
-        
         action.add_continuous(Movimientos)
         env.set_actions(behavior_name, action)
         env.step()
@@ -277,7 +277,7 @@ def EntrenarPoblacion(env, behavior_name, spec, n_actions=4):
                 if(mejorPunt < Puntuaciones[i] and Chocados[i] == 1):
                     mejorPunt = Puntuaciones[i]
                     mejor = i
-            print("Paso: " + str(steps) + " \t| Chocados: " + str(NumChocados) + "\t| Mejor Punt: " + "%.2f" % mejorPunt + "\t| Mejor Zona: " + str(DronesZona[mejor]))
+            print("Paso: " + str(steps) + " \t| Chocados: " + str(NumChocados) + "\t|Mejor Dron: " + str(mejor) + "\t|Punt del Mejor : " + "%.2f" % mejorPunt + "\t| Zona del Mejor: " + str(DronesZona[mejor]))
             
         steps = steps + 1
         
@@ -324,19 +324,21 @@ def assign_rewards(genomes, config):
         for i, (_, genome) in enumerate(genomes):
             genome.fitness = Puntuaciones[i]
 
+def save_stats():
+    max_score = max(Puntuaciones)
+    max_index = Puntuaciones.index(max_score)
+    with open(f"stats.txt", "a") as f:
+        f.write(f"Generación: {Epoca} | Dron: {max_index} | Puntuación: {max_score}\n")
+
 def Entrenar():
     
     global Epoca
     global EpocaPartida
-    global PuntActual
-    global PuntPasada
     global Modelos
     
     Epoca = EpocaPartida
-    PuntActual = 0
-    PuntPasada = 0
         
-    env = UnityEnvironment(file_name=FILE_NAME, seed=1, no_graphics=True, side_channels=[])
+    env = UnityEnvironment(file_name=FILE_NAME, seed=1, no_graphics=False, side_channels=[])
     env.reset()
     time.sleep(5)
 
@@ -355,22 +357,26 @@ def Entrenar():
                         os.path.dirname(os.path.abspath(__file__)) + '/neat_config.txt')  # Asegúrate de cambiar 'config_file_path' al camino a tu archivo de configuración
         
     # Crea un objeto Checkpointer
-    checkpointer = Checkpointer(generation_interval=None, time_interval_seconds=None, filename_prefix='src/prueba1/src/neat-checkpoints/neat-checkpoint-')
+    checkpointer = Checkpointer(generation_interval=None, time_interval_seconds=None, filename_prefix='neat-checkpoints/neat-checkpoint-')
     # Decide si cargar desde un checkpoint o crear una población nueva
     load_checkpoint = False  # Cambiar a True si desea cargar desde un checkpoint
-    checkpoint_file = 'src/prueba1/src/neat-checkpoints/neat-checkpoint-1'  # Cambia 'x' por el número de generación del checkpoint que quieres cargar
+    checkpoint_file = 'neat-checkpoints/neat-checkpoint-0'  # Cambia 'x' por el número de generación del checkpoint que quieres cargar
     if load_checkpoint:
         population = checkpointer.restore_checkpoint(checkpoint_file)
         EpocaPartida = population.generation
     else:
+        try:
+            os.remove("stats.txt")
+        except:
+            pass
         population = neat.Population(config)
         stats = neat.StatisticsReporter()
         population.add_reporter(stats)
         EpocaPartida = 0
 
-    Modelos = [Dron(config) for i in range(100)]
+    Modelos = [Dron(config) for i in range(TamPoblacion)]
 
-    for i in range(MaxEpocas - EpocaPartida):
+    for generation in range(MaxEpocas - EpocaPartida):
         ReiniciarGeneracion()
         genomes = list(population.population.items())
         
@@ -382,7 +388,10 @@ def Entrenar():
         EntrenarPoblacion(env, behavior_name, spec)
         
         # Guarda un checkpoint después de cada generación
-        checkpointer.save_checkpoint(config, population.population, population.species, i)
+        checkpointer.save_checkpoint(config, population.population, population.species, generation)
+
+        save_stats()
+        Epoca += 1
 
         # Actualiza la población basándose en las recompensas calculadas
         population.run(assign_rewards,1)
