@@ -36,7 +36,7 @@ public class Dron : Agent
         {
             estado = false;
             Carcasa.material = muerto;
-            print("Muerto");
+            // print("Muerto");
         }
 
         ActionSegment<float> contiuousActions = actionsOut.ContinuousActions;
@@ -164,7 +164,7 @@ public class Dron : Agent
         {
             estado = false;
             Carcasa.material = muerto;
-            print("Muerto");
+            // print("Muerto");
         }
 
         if (other.TryGetComponent<Meta>(out Meta meta))
