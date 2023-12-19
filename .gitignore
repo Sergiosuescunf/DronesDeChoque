@@ -16,3 +16,5 @@ CasaEntreno/CasaEntreno_Data/*
 Proyecto Unity/.vscode/settings.json
 Proyecto Unity/ProjectSettings/BurstAotSettings_StandaloneLinux64.json
 Proyecto Unity/ProjectSettings/ProjectSettings.asset
+Proyecto Unity/ProjectSettings/EditorBuildSettings.asset
+Proyecto Unity/Assets/Scenes/Casa Entreno.unity
