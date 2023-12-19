@@ -2,18 +2,19 @@ import random
 import numpy as np
 import mlagents
 import neat
+import visualize
 
 import tensorflow as tf
 import math
 import os
 import time
 
-from concurrent.futures import ThreadPoolExecutor
 from neat.checkpoint import Checkpointer
 from mlagents_envs.environment import UnityEnvironment
 from tensorflow import keras
 from keras import models, layers
 from Dron import *
+
 
 so = os.name
 
@@ -28,16 +29,18 @@ elif so == 'nt':
 NumZonas = 0
 ZonasPunt = 50
 Penalizacion = 40
+Penalizacion_cercania = 20
+Distancia_maxima = 0.3
 SectorVis = []
 DronesZona = [] 
 Zonas = [] 
 
 #Variiables Poblacion
 TamPoblacion = 200 
-TamElite = 20
+TamElite = 10
 Epoca = 0
 EpocaPartida = 0
-MaxEpocas = 50
+MaxEpocas = 20
 MaxSteps = 2000
 
 #Normalizar Láseres
@@ -57,20 +60,20 @@ MaxIM = 0.2
 Modelos = []
 Elite = []
 Puntuaciones = [] 
+PuntActual = 0
+PuntPasada = 0
 Chocados = []
 
 #Directorio de guardado
 directorio = ""
 
-N_ACTIONS = 4
-
 #Modelo
-def modelo():
+def modelo(n_actions=4):
     
     bias_init = tf.keras.initializers.he_uniform()
     funct_atc = tf.nn.relu
 
-    n_inputs = 78 + N_ACTIONS*4
+    n_inputs = 78 + n_actions*4
   
     model = models.Sequential()
     model.add(layers.Dense(16, input_shape = (n_inputs,), bias_initializer=bias_init, activation = funct_atc)) # type: ignore
@@ -130,6 +133,23 @@ def CalcularPunt(id, x, z):
             list.append((auxX, auxZ))
             Puntuaciones[id] += 1
 
+def PenalizacionDistancia(distancia):
+    return -Penalizacion_cercania * (Distancia_maxima - distancia)/Distancia_maxima 
+
+def CalcularPenalizacionDistancia(id, dist_cent, dist_izq, dist_der):
+
+    if dist_cent <= Distancia_maxima:
+        pen_cent = PenalizacionDistancia(dist_cent)
+        Puntuaciones[id] += pen_cent
+
+    if dist_izq <= Distancia_maxima:
+        pen_izq = PenalizacionDistancia(dist_izq)
+        Puntuaciones[id] += pen_izq
+
+    if dist_der <= Distancia_maxima:
+        pen_der = PenalizacionDistancia(dist_der)
+        Puntuaciones[id] += pen_der
+
 def ReiniciarGeneracion():
     Puntuaciones.clear()
     for i in range(TamPoblacion):
@@ -163,84 +183,8 @@ def Normalizar(Laseres):
         
     return Laseres
 
-def procesar_agente(id, decision_steps, Chocados, historial_acciones):
-    global NumChocados
-    global Puntuaciones
-    
-    if(Chocados == 1):
-        
-        Laseres = np.atleast_2d([])
-        
-        for i in range(7):
-            laser = decision_steps[0][i]
-            lectura = np.atleast_2d([laser[21], laser[17], laser[13], laser[9], laser[5], laser[1], laser[3], laser[7], laser[11], laser[15], laser[19]])
-            Laseres  = np.concatenate((Laseres, lectura), axis=1)
-        
-        altura = np.atleast_2d([decision_steps[0][7][1]])
-        if(normalizar):
-            Laseres = Normalizar(Laseres)
-        Laseres = np.concatenate((Laseres, altura), axis=1)
-
-        historial_aplanado = np.concatenate([accion.flatten() for accion in historial_acciones])
-        entrada_red = np.concatenate([Laseres.flatten(), historial_aplanado])
-        
-        pred = Modelos[id].prediction(entrada_red)
-        pred = np.array([pred], dtype = np.float32)
-        pred_array = pred.flatten()
-
-        if len(historial_acciones) >= N_ACTIONS:
-            historial_acciones.pop(0)  # Eliminar la acción más antigua si ya tenemos n acciones
-        
-        historial_acciones.append(pred_array)  # Añadir la nueva acción
-
-        estado = decision_steps[0][8]
-        posX = estado[0]
-        posZ = estado[2]
-        
-        CalcularPunt(id, posX, posZ)
-        
-        if(Chocados == 0):
-            NumChocados += 1
-        
-        if estado[3] == 0:
-            Chocados = 0
-            if(Puntuaciones[id] > 0):
-                Puntuaciones[id] -= Penalizacion
-            NumChocados += 1
-            
-    else:
-        pred = np.array([[0, 0, 0, 0]], dtype = np.float32)
-    
-
-    """
-    if(Chocados == 1 and Sectores == NumZonas - 1):
-        Chocados = 0
-        Puntuaciones += (MaxSteps - steps)/100
-        NumMeta = NumMeta + 1
-        pred = np.concatenate((pred, np.array([[0.4]])), axis=1) 
-    """    
-    
-    if(Chocados == 0):
-        pred = np.concatenate((pred, np.array([[0.1]])), axis=1)
-    # elif(id == 0 and steps < 11):
-    #     pred = np.concatenate((pred, np.array([[0.2]])), axis=1)
-    # elif(Chocados[camara] == 0 and id == mejor):
-    #     pred = np.concatenate((pred, np.array([[0.2]])), axis=1)
-    #     camara = id
-    elif(id < TamElite):
-        pred = np.concatenate((pred, np.array([[0.3]])), axis=1)    
-    else:
-        pred = np.concatenate((pred, np.array([[0]])), axis=1)
-
-    return id, pred
-
-
-NumChocados = None
-
 #Entrena una población
-def EntrenarPoblacion(env, behavior_name, spec):
-    global NumChocados
-    global Chocados
+def EntrenarPoblacion(env, behavior_name, spec, n_actions=4):
 
     if(Epoca < 39):
         auxMS = (MaxSteps - 200)//40
@@ -249,30 +193,105 @@ def EntrenarPoblacion(env, behavior_name, spec):
         FinalStep = MaxSteps
         
     steps = 0
-    mejor = 0
-    mejorPunt = 0
     NumChocados = 0
+    mejor = 0
+    camara = 0
+    mejorPunt = 0
     
     env.reset()
     decision_steps, terminal_steps = env.get_steps(behavior_name)
     action = spec.action_spec.random_action(len(decision_steps))
 
     # Inicializar el historial de acciones para cada agente
-    historial_acciones = [[np.zeros(4, dtype=np.float32) for _ in range(N_ACTIONS)] for _ in range(TamPoblacion)]
+    historial_acciones = {id: [np.zeros(4, dtype=np.float32) for _ in range(n_actions)] for id in range(TamPoblacion)}
 
-    # pred = np.array([0, 0, 0, 0], dtype = np.float32)
+    pred = np.array([0, 0, 0, 0], dtype = np.float32)
     
     done = False 
     while not done:
+        
         decision_steps, terminal_steps = env.get_steps(behavior_name)
-        decisions = [decision_steps[i] for i in range(TamPoblacion)]
-        Movimientos = np.zeros((TamPoblacion, 5))
-         # Crear un pool de hilos y distribuir el trabajo
-        with ThreadPoolExecutor(max_workers=24) as executor:
-            for (id, result) in executor.map(procesar_agente, decision_steps.agent_id, decisions, Chocados, historial_acciones):
-                # report the result
-                Movimientos[id] = result
+        Movimientos = [[]]
+        
+        for id in decision_steps.agent_id:
+                
+            if(Chocados[id] == 1):
+                
+                Laseres = np.atleast_2d([])
+                
+                for i in range(7):
+                    laser = decision_steps[id][0][i]
+                    lectura = np.atleast_2d([laser[21], laser[17], laser[13], laser[9], laser[5], laser[1], laser[3], laser[7], laser[11], laser[15], laser[19]])
+                    Laseres  = np.concatenate((Laseres, lectura), axis=1)
+                
+                altura = np.atleast_2d([decision_steps[id][0][7][1]])
+                if(normalizar):
+                    Laseres = Normalizar(Laseres)
+                Laseres = np.concatenate((Laseres, altura), axis=1)
 
+                historial_aplanado = np.concatenate([accion.flatten() for accion in historial_acciones[id]])
+                entrada_red = np.concatenate([Laseres.flatten(), historial_aplanado])
+                
+                pred = Modelos[id].prediction(entrada_red)
+                pred = np.array([pred], dtype = np.float32)
+                pred_array = pred.flatten()
+
+                if len(historial_acciones[id]) >= n_actions:
+                    historial_acciones[id].pop(0)  # Eliminar la acción más antigua si ya tenemos n acciones
+                
+                historial_acciones[id].append(pred_array)  # Añadir la nueva acción
+
+                estado = decision_steps[id][0][9]
+                posX = estado[0]
+                posZ = estado[2]
+                
+                CalcularPunt(id, posX, posZ)
+
+                dist_cent = decision_steps[id][0][8][1]
+                dist_izq = decision_steps[id][0][8][3]
+                dist_der = decision_steps[id][0][8][5]
+
+                CalcularPenalizacionDistancia(id, dist_cent, dist_izq, dist_der)
+                
+                if(Chocados[id] == 0):
+                    NumChocados += 1
+                
+                if estado[3] == 0:
+                    Chocados[id] = 0
+                    # if(Puntuaciones[id] > 0):
+                    #     Puntuaciones[id] -= Penalizacion
+                    NumChocados = NumChocados + 1
+                    
+            else:
+                pred = np.array([[0, 0, 0, 0]], dtype = np.float32)
+            
+
+            """
+            if(Chocados[id] == 1 and Sectores[id] == NumZonas - 1):
+                Chocados[id] = 0
+                Puntuaciones[id] += (MaxSteps - steps)/100
+                NumMeta = NumMeta + 1
+                pred = np.concatenate((pred, np.array([[0.4]])), axis=1) 
+            """    
+            
+            if(Chocados[id] == 0):
+                pred = np.concatenate((pred, np.array([[0.1]])), axis=1)
+            elif(id == 0 and steps < 11):
+                pred = np.concatenate((pred, np.array([[0.2]])), axis=1)
+            elif(Chocados[camara] == 0 and id == mejor):
+                pred = np.concatenate((pred, np.array([[0.2]])), axis=1)
+                camara = id
+            elif(id < TamElite):
+                pred = np.concatenate((pred, np.array([[0.3]])), axis=1)    
+            else:
+                pred = np.concatenate((pred, np.array([[0]])), axis=1)
+
+            if len(Movimientos[0]) == 0:
+                Movimientos = pred
+            else:
+                nuevoMovimiento = pred
+                Movimientos = np.concatenate((Movimientos, nuevoMovimiento), axis=0)
+        
         action.add_continuous(Movimientos)
         env.set_actions(behavior_name, action)
         env.step()
@@ -341,11 +360,15 @@ def Entrenar():
     
     global Epoca
     global EpocaPartida
+    global PuntActual
+    global PuntPasada
     global Modelos
     
     Epoca = EpocaPartida
+    PuntActual = 0
+    PuntPasada = 0
         
-    env = UnityEnvironment(file_name=FILE_NAME, seed=1, no_graphics=False, side_channels=[])
+    env = UnityEnvironment(file_name=FILE_NAME, seed=1, no_graphics=True, side_channels=[])
     env.reset()
     time.sleep(5)
 
@@ -367,15 +390,11 @@ def Entrenar():
     checkpointer = Checkpointer(generation_interval=None, time_interval_seconds=None, filename_prefix='neat-checkpoints/neat-checkpoint-')
     # Decide si cargar desde un checkpoint o crear una población nueva
     load_checkpoint = False  # Cambiar a True si desea cargar desde un checkpoint
-    checkpoint_file = 'neat-checkpoints/neat-checkpoint-0'  # Cambia 'x' por el número de generación del checkpoint que quieres cargar
+    checkpoint_file = 'neat-checkpoint-1'  # Cambia 'x' por el número de generación del checkpoint que quieres cargar
     if load_checkpoint:
         population = checkpointer.restore_checkpoint(checkpoint_file)
         EpocaPartida = population.generation
     else:
-        try:
-            os.remove("stats.txt")
-        except:
-            pass
         population = neat.Population(config)
         stats = neat.StatisticsReporter()
         population.add_reporter(stats)
@@ -396,12 +415,15 @@ def Entrenar():
         
         # Guarda un checkpoint después de cada generación
         checkpointer.save_checkpoint(config, population.population, population.species, generation)
-
         save_stats()
         Epoca += 1
-
         # Actualiza la población basándose en las recompensas calculadas
         population.run(assign_rewards,1)
+        # Write run statistics to file.
+        stats.save()
+
+    visualize.plot_stats(stats, ylog=False, view=True)
+    visualize.plot_species(stats, view=False)
     env.close()
 
     
