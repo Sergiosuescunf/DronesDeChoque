@@ -1,7 +1,7 @@
 [NEAT]
 fitness_criterion     = max  
 fitness_threshold     = 1.0  
-pop_size              = 100  
+pop_size              = 200  
 reset_on_extinction   = False  
 
 [DefaultStagnation]
@@ -10,18 +10,18 @@ max_stagnation        = 15
 species_elitism       = 2  
 
 [DefaultReproduction]
-elitism               = 10  
+elitism               = 20  
 survival_threshold    = 0.2  
-min_species_size      = 2  
+min_species_size      = 10  
 
 [DefaultSpeciesSet]
 compatibility_threshold = 3.0  
 
 [DefaultGenome]
 
-activation_default = sigmoid  
+activation_default = relu  
 activation_mutate_rate = 0.0  
-activation_options = sigmoid  
+activation_options = relu  
 
 
 aggregation_default = sum  
