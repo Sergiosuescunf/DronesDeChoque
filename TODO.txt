@@ -1,0 +1,4 @@
+- El sistema de puntuaciones va rarete, no tiene en cuenta el avance en la primera zona y cuando pasa de zona no puntua si ya ha pasado por la posición en la que está.
+
+- Para 
+
