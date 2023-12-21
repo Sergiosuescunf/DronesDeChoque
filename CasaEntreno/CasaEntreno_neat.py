@@ -13,7 +13,7 @@ from neat.checkpoint import Checkpointer
 from mlagents_envs.environment import UnityEnvironment
 from tensorflow import keras
 from keras import models, layers
-from Dron import *
+from dron import *
 
 
 so = os.name
@@ -126,12 +126,7 @@ def CalcularPunt(id, x, z):
     if(DronesZona[id] != ZonaPas):
         Puntuaciones[id] += ZonasPunt
     
-    if(DronesZona[id] != 0):
-        list = SectorVis[id]
-        
-        if((auxX, auxZ) not in list):
-            list.append((auxX, auxZ))
-            Puntuaciones[id] += 1
+    Modelos[id].updateGrid(x,z)
 
 def PenalizacionDistancia(distancia):
     return -Penalizacion_cercania * (Distancia_maxima - distancia)/Distancia_maxima 
@@ -292,6 +287,9 @@ def EntrenarPoblacion(env, behavior_name, spec, n_actions=4):
                 nuevoMovimiento = pred
                 Movimientos = np.concatenate((Movimientos, nuevoMovimiento), axis=0)
         
+        for i in range(len(Puntuaciones)):
+            Puntuaciones[i] += Modelos[i].puntuacionGrid()
+
         action.add_continuous(Movimientos)
         env.set_actions(behavior_name, action)
         env.step()
