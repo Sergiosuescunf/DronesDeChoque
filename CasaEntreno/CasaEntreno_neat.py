@@ -43,7 +43,7 @@ TamPoblacion = 200
 TamElite = 10
 Epoca = 0
 EpocaPartida = 0
-MaxEpocas = 3
+MaxEpocas = 2
 MaxSteps = 2000
 
 #Normalizar Láseres
@@ -366,7 +366,7 @@ def Entrenar():
     PuntActual = 0
     PuntPasada = 0
         
-    env = UnityEnvironment(file_name=FILE_NAME, seed=1, no_graphics=False, side_channels=[])
+    env = UnityEnvironment(file_name=FILE_NAME, seed=1, no_graphics=True, side_channels=[])
     env.reset()
     time.sleep(5)
 
