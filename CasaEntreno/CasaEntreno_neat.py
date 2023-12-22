@@ -25,22 +25,25 @@ elif so == 'nt':
     FILE_NAME = 'CasaEntreno.exe'
     CLEAR_COMMAND = 'cls'
 
-#Atrivutos de puntuacion
+# Normalizar puntacion por grid y penalizacion y añadir pesos (coeficientes)
+
+N_INPUTS = 2
+
+#Atributos de puntuacion
 NumZonas = 0
 ZonasPunt = 50
 Penalizacion = 40
 Penalizacion_cercania = 20
+Puntacion_zona_nueva = 100
 Distancia_maxima = 0.3
-SectorVis = []
-DronesZona = [] 
 Zonas = [] 
 
-#Variiables Poblacion
+#Variables Poblacion
 TamPoblacion = 200 
 TamElite = 10
 Epoca = 0
 EpocaPartida = 0
-MaxEpocas = 20
+MaxEpocas = 3
 MaxSteps = 2000
 
 #Normalizar Láseres
@@ -56,10 +59,11 @@ IncrIM = 0.2 #Incremento del índice de mutacion
 MaxPM = .25
 MaxIM = 0.2
 
-#Atrivutos Poblacion
+#Atributos Poblacion
 Modelos = []
 Elite = []
 Puntuaciones = [] 
+Penalizaciones = []
 PuntActual = 0
 PuntPasada = 0
 Chocados = []
@@ -73,7 +77,7 @@ def modelo(n_actions=4):
     bias_init = tf.keras.initializers.he_uniform()
     funct_atc = tf.nn.relu
 
-    n_inputs = 78 + n_actions*4
+    n_inputs = 78 + n_actions*N_INPUTS
   
     model = models.Sequential()
     model.add(layers.Dense(16, input_shape = (n_inputs,), bias_initializer=bias_init, activation = funct_atc)) # type: ignore
@@ -117,14 +121,10 @@ def CalcularZona(x, z):
 
 def CalcularPunt(id, x, z):
     
-    auxX = int(x)
-    auxZ = int(z)
+    zona = CalcularZona(x, z)
     
-    ZonaPas = DronesZona[id]
-    DronesZona[id] = CalcularZona(x, z)
-    
-    if(DronesZona[id] != ZonaPas):
-        Puntuaciones[id] += ZonasPunt
+    if(zona not in Modelos[id].zonas_exploradas):
+        Modelos[id].zonas_exploradas.append(zona)
     
     Modelos[id].updateGrid(x,z)
 
@@ -135,29 +135,29 @@ def CalcularPenalizacionDistancia(id, dist_cent, dist_izq, dist_der):
 
     if dist_cent <= Distancia_maxima:
         pen_cent = PenalizacionDistancia(dist_cent)
-        Puntuaciones[id] += pen_cent
+        Penalizaciones[id] += pen_cent
 
     if dist_izq <= Distancia_maxima:
         pen_izq = PenalizacionDistancia(dist_izq)
-        Puntuaciones[id] += pen_izq
+        Penalizaciones[id] += pen_izq
 
     if dist_der <= Distancia_maxima:
         pen_der = PenalizacionDistancia(dist_der)
-        Puntuaciones[id] += pen_der
+        Penalizaciones[id] += pen_der
 
 def ReiniciarGeneracion():
     Puntuaciones.clear()
+    Penalizaciones.clear()
     for i in range(TamPoblacion):
+        Modelos[i].zonas_exploradas.clear()
+        Modelos[i].clean_grid()
         Puntuaciones.append(0.0)
+        Penalizaciones.append(0.0)
         Chocados.append(1)
-        DronesZona.append(0)
-        SectorVis.append([])
 
 def ReiniciarDrones():
     for i in range(TamPoblacion):
         Chocados[i] = 1
-        DronesZona[i] = 0
-        SectorVis[i].clear()
 
 #Normaliza los valores de los láseres entre 0 y 1
 def Normalizar(Laseres):
@@ -198,9 +198,9 @@ def EntrenarPoblacion(env, behavior_name, spec, n_actions=4):
     action = spec.action_spec.random_action(len(decision_steps))
 
     # Inicializar el historial de acciones para cada agente
-    historial_acciones = {id: [np.zeros(4, dtype=np.float32) for _ in range(n_actions)] for id in range(TamPoblacion)}
+    historial_acciones = {id: [np.zeros(N_INPUTS, dtype=np.float32) for _ in range(n_actions)] for id in range(TamPoblacion)}
 
-    pred = np.array([0, 0, 0, 0], dtype = np.float32)
+    pred = np.array([0, 0], dtype = np.float32)
     
     done = False 
     while not done:
@@ -258,7 +258,7 @@ def EntrenarPoblacion(env, behavior_name, spec, n_actions=4):
                     NumChocados = NumChocados + 1
                     
             else:
-                pred = np.array([[0, 0, 0, 0]], dtype = np.float32)
+                pred = np.array([[0, 0]], dtype = np.float32)
             
 
             """
@@ -288,7 +288,7 @@ def EntrenarPoblacion(env, behavior_name, spec, n_actions=4):
                 Movimientos = np.concatenate((Movimientos, nuevoMovimiento), axis=0)
         
         for i in range(len(Puntuaciones)):
-            Puntuaciones[i] += Modelos[i].puntuacionGrid()
+            Puntuaciones[i] = Modelos[i].puntuacionGrid() + Penalizaciones[i] + len(Modelos[i].zonas_exploradas) * Puntacion_zona_nueva
 
         action.add_continuous(Movimientos)
         env.set_actions(behavior_name, action)
@@ -301,7 +301,7 @@ def EntrenarPoblacion(env, behavior_name, spec, n_actions=4):
                 if(mejorPunt < Puntuaciones[i] and Chocados[i] == 1):
                     mejorPunt = Puntuaciones[i]
                     mejor = i
-            print("Paso: " + str(steps) + " \t| Chocados: " + str(NumChocados) + "\t|Mejor Dron: " + str(mejor) + "\t|Punt del Mejor : " + "%.2f" % mejorPunt + "\t| Zona del Mejor: " + str(DronesZona[mejor]))
+            print("Paso: " + str(steps) + " \t| Chocados: " + str(NumChocados) + "\t|Mejor Dron: " + str(mejor) + "\t|Punt del Mejor : " + "%.2f" % mejorPunt + "\t| Zona del Mejor: " + str(max(Modelos[mejor].zonas_exploradas)))
             
         steps = steps + 1
         
@@ -366,7 +366,7 @@ def Entrenar():
     PuntActual = 0
     PuntPasada = 0
         
-    env = UnityEnvironment(file_name=FILE_NAME, seed=1, no_graphics=True, side_channels=[])
+    env = UnityEnvironment(file_name=FILE_NAME, seed=1, no_graphics=False, side_channels=[])
     env.reset()
     time.sleep(5)
 
@@ -417,8 +417,8 @@ def Entrenar():
         Epoca += 1
         # Actualiza la población basándose en las recompensas calculadas
         population.run(assign_rewards,1)
-        # Write run statistics to file.
         stats.save()
+        # Write run statistics to file.
 
     visualize.plot_stats(stats, ylog=False, view=True)
     visualize.plot_species(stats, view=False)

@@ -20,6 +20,11 @@ class Grid:
                 if cell.x_init <= x < cell.x_final and cell.z_init <= z < cell.z_final:
                     return cell
     
+    def clean_grid(self):
+        for row in self.grid:
+            for cell in row:
+                cell.visited = False
+    
     def update(self, x, z):
         cell = self.get_cell(x, z)
         cell.visited = True

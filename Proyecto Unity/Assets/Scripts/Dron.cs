@@ -119,10 +119,11 @@ public class Dron : Agent
             float rotateSpeed = 100f;
             float ruido = 0.1f;
 
-            float vud = actions.ContinuousActions[0];
-            float vya = actions.ContinuousActions[1];
-            float vfb = actions.ContinuousActions[2];
-            float vlr = actions.ContinuousActions[3];
+            // TODO: Modificar las acciones
+            float vud = 0;
+            float vya = actions.ContinuousActions[0];
+            float vfb = actions.ContinuousActions[1];
+            float vlr = 0;
 
             if(ruido != 0) 
             {
@@ -132,7 +133,7 @@ public class Dron : Agent
                 vlr += Random.Range(-ruido, ruido);
             }
 
-            float auxEstado = actions.ContinuousActions[4];
+            float auxEstado = actions.ContinuousActions[2];
 
             if (animacion) Animar(vud, vya, vfb, vlr);
 

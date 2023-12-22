@@ -116,10 +116,10 @@ public class Pilotar : Agent
             float moveSpeed = 5f;
             float rotateSpeed = 100f;
 
-            float vud = actions.ContinuousActions[0];
-            float vya = actions.ContinuousActions[1];
-            float vfb = actions.ContinuousActions[2];
-            float vlr = actions.ContinuousActions[3];
+            float vud = 0;
+            float vya = actions.ContinuousActions[0];
+            float vfb = actions.ContinuousActions[1];
+            float vlr = 0;
 
             Animar(vud, vya, vfb, vlr);
 
