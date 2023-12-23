@@ -13,7 +13,7 @@ from neat.checkpoint import Checkpointer
 from mlagents_envs.environment import UnityEnvironment
 from tensorflow import keras
 from keras import models, layers
-from dron import *
+from dron_neat import *
 
 
 so = os.name
