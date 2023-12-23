@@ -43,7 +43,7 @@ TamPoblacion = 200
 TamElite = 10
 Epoca = 0
 EpocaPartida = 0
-MaxEpocas = 2
+MaxEpocas = 100
 MaxSteps = 2000
 
 #Normalizar Láseres
@@ -319,6 +319,7 @@ def EntrenarPoblacion(env, behavior_name, spec, n_actions=4):
         """
 
 def assign_rewards(genomes, config):
+    print('Lenght genomes: ' + str(len(genomes)))
     # Asegurarse de que no hay más de 100 genomas
     if len(genomes) > TamPoblacion:
         print('Poniendo a 0')
@@ -403,7 +404,13 @@ def Entrenar():
     for generation in range(MaxEpocas - EpocaPartida):
         ReiniciarGeneracion()
         genomes = list(population.population.items())
-        
+        if (len(genomes) > TamPoblacion):
+            genomes = genomes[:TamPoblacion]
+        print(' Genomes:', len(genomes))
+        if (len(genomes) < TamPoblacion):
+            for i in range(len(genomes), TamPoblacion):
+                genomes.append(genomes[len(genomes) - 1])
+            print('After Genomes:', len(genomes))
         ReiniciarDrones()
 
         for i, node in enumerate(Modelos):
@@ -418,10 +425,10 @@ def Entrenar():
         # Actualiza la población basándose en las recompensas calculadas
         population.run(assign_rewards,1)
         stats.save()
+        visualize.plot_stats(stats, ylog=False, view=False)
+        visualize.plot_species(stats, view=False)
         # Write run statistics to file.
 
-    visualize.plot_stats(stats, ylog=False, view=True)
-    visualize.plot_species(stats, view=False)
     env.close()
 
     

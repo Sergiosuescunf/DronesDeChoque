@@ -83,7 +83,7 @@ def modelo(n_actions=4):
     model = models.Sequential()
     model.add(layers.Dense(16, input_shape = (n_inputs,), bias_initializer=bias_init, activation = funct_atc)) # type: ignore
     model.add(layers.Dense(8, bias_initializer=bias_init, activation = funct_atc)) # type: ignore
-    model.add(layers.Dense(4, bias_initializer=bias_init, activation = tf.nn.tanh)) # type: ignore
+    model.add(layers.Dense(2, bias_initializer=bias_init, activation = tf.nn.tanh)) # type: ignore
 
     return model
 
@@ -330,7 +330,7 @@ def EntrenarPoblacion(env, behavior_name, spec, n_actions=4):
     action = spec.action_spec.random_action(len(decision_steps))
 
     # Inicializar el historial de acciones para cada agente
-    historial_acciones = {id: [np.zeros(4, dtype=np.float32) for _ in range(n_actions)] for id in range(TamPoblacion)}
+    historial_acciones = {id: [np.zeros(2, dtype=np.float32) for _ in range(n_actions)] for id in range(TamPoblacion)}
 
     pred = np.array([0, 0, 0, 0], dtype = np.float32)
     

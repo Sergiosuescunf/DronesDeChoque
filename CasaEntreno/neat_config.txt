@@ -6,11 +6,11 @@ reset_on_extinction   = False
 
 [DefaultStagnation]
 species_fitness_func  = max  
-max_stagnation        = 5  
+max_stagnation        = 3  
 species_elitism       = 2  
 
 [DefaultReproduction]
-elitism               = 15  
+elitism               = 5  
 survival_threshold    = 0.2  
 min_species_size      = 5  
 
