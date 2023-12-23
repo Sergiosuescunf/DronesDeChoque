@@ -23,22 +23,25 @@ elif so == 'nt':
     FILE_NAME = 'CasaEntreno.exe'
     CLEAR_COMMAND = 'cls'
 
+# Normalizar puntacion por grid y penalizacion y añadir pesos (coeficientes)
+
+N_INPUTS = 2
+
 #Atributos de puntuacion
 NumZonas = 0
 ZonasPunt = 50
 Penalizacion = 40
 Penalizacion_cercania = 20
+Puntacion_zona_nueva = 100
 Distancia_maxima = 0.3
-SectorVis = []
-DronesZona = [] 
 Zonas = [] 
 
 #Variables Poblacion
-TamPoblacion = 100 
+TamPoblacion = 200 
 TamElite = 10
 Epoca = 0
 EpocaPartida = 0
-MaxEpocas = 50
+MaxEpocas = 100
 MaxSteps = 2000
 
 #Normalizar Láseres
@@ -58,6 +61,7 @@ MaxIM = 0.2
 Modelos = []
 Elite = []
 Puntuaciones = [] 
+Penalizaciones = []
 PuntActual = 0
 PuntPasada = 0
 Chocados = []
@@ -122,38 +126,29 @@ def CalcularZona(x, z):
 
 def CalcularPunt(id, x, z):
     
-    auxX = int(x)
-    auxZ = int(z)
+    zona = CalcularZona(x, z)
     
-    ZonaPas = DronesZona[id]
-    DronesZona[id] = CalcularZona(x, z)
+    if(zona not in Modelos[id].zonas_exploradas):
+        Modelos[id].zonas_exploradas.append(zona)
     
-    if(DronesZona[id] != ZonaPas):
-        Puntuaciones[id] += ZonasPunt
-    
-    if(DronesZona[id] != 0):
-        list = SectorVis[id]
-        
-        if((auxX, auxZ) not in list):
-            list.append((auxX, auxZ))
-            Puntuaciones[id] += 1
+    Modelos[id].updateGrid(x,z) 
 
-def Penalizacion(distancia):
+def PenalizacionDistancia(distancia):
     return -Penalizacion_cercania * (Distancia_maxima - distancia)/Distancia_maxima 
 
 def CalcularPenalizacionDistancia(id, dist_cent, dist_izq, dist_der):
 
     if dist_cent <= Distancia_maxima:
-        pen_cent = Penalizacion(dist_cent)
-        Puntuaciones[id] += pen_cent
+        pen_cent = PenalizacionDistancia(dist_cent)
+        Penalizaciones[id] += pen_cent
 
     if dist_izq <= Distancia_maxima:
-        pen_izq = Penalizacion(dist_izq)
-        Puntuaciones[id] += pen_izq
+        pen_izq = PenalizacionDistancia(dist_izq)
+        Penalizaciones[id] += pen_izq
 
     if dist_der <= Distancia_maxima:
-        pen_der = Penalizacion(dist_der)
-        Puntuaciones[id] += pen_der
+        pen_der = PenalizacionDistancia(dist_der)
+        Penalizaciones[id] += pen_der
 
 #Genera una nueva poblacion desde 0
 def NuevaPoblacion():
@@ -161,16 +156,12 @@ def NuevaPoblacion():
     Modelos.clear()
     Puntuaciones.clear()
     Chocados.clear()
-    DronesZona.clear()
-    SectorVis.clear()
     
     for i in range(TamPoblacion):
         model = modelo()
         Modelos.append(model)
         Puntuaciones.append(0.0)
         Chocados.append(1)
-        DronesZona.append(0)
-        SectorVis.append([])
         
 def ReiniciarDrones():
     for i in range(TamPoblacion):
