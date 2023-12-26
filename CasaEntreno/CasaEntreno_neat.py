@@ -147,6 +147,7 @@ def CalcularPenalizacionDistancia(id, dist_cent, dist_izq, dist_der):
 
 def ReiniciarGeneracion():
     Puntuaciones.clear()
+    Chocados.clear()
     Penalizaciones.clear()
     for i in range(TamPoblacion):
         Modelos[i].zonas_exploradas.clear()
@@ -154,10 +155,6 @@ def ReiniciarGeneracion():
         Puntuaciones.append(0.0)
         Penalizaciones.append(0.0)
         Chocados.append(1)
-
-def ReiniciarDrones():
-    for i in range(TamPoblacion):
-        Chocados[i] = 1
 
 #Normaliza los valores de los láseres entre 0 y 1
 def Normalizar(Laseres):
@@ -411,7 +408,6 @@ def Entrenar():
             for i in range(len(genomes), TamPoblacion):
                 genomes.append(genomes[len(genomes) - 1])
             print('After Genomes:', len(genomes))
-        ReiniciarDrones()
 
         for i, node in enumerate(Modelos):
             node.setGenome(genomes[i][1])
