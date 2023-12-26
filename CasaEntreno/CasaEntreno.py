@@ -260,7 +260,7 @@ def NuevaGeneracion():
     Modelos.clear()
 
     for x in Elite:
-        Modelos.append(Dron(x))
+        Modelos.append(x)
 
     for x in range(TamPoblacion - TamElite):
         p1 = random.randint(0,TamElite-1)
@@ -284,7 +284,7 @@ def CargarElite(nombre = 'Generacion1'):
         path_model = directorio + nombre + ' Individuo' + str(x) + '.h5'
         new_model = modelo()
         new_model.load_weights(path_model)
-        Elite.append(new_model)
+        Elite.append(Dron(new_model))
     print('Elite cargada!')
 
 #Normaliza los valores de los láseres entre 0 y 1
