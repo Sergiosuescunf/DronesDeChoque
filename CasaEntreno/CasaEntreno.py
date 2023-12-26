@@ -12,6 +12,7 @@ from mlagents_envs.side_channel.engine_configuration_channel import EngineConfig
 
 from tensorflow import keras
 from keras import models, layers
+from dron import *
 
 
 so = os.name
@@ -75,7 +76,7 @@ def modelo(n_actions=4):
     bias_init = tf.keras.initializers.he_uniform()
     funct_atc = tf.nn.relu
 
-    n_inputs = 78 + n_actions*4
+    n_inputs = 78 + n_actions*N_INPUTS
     # n_intermediate_inputs =  n_inputs/2
     # n_intermediate_inputs_2 = n_intermediate_inputs/2 
   
@@ -155,20 +156,24 @@ def NuevaPoblacion():
     
     Modelos.clear()
     Puntuaciones.clear()
+    Penalizaciones.clear()
     Chocados.clear()
     
     for i in range(TamPoblacion):
         model = modelo()
-        Modelos.append(model)
+        Modelos.append(Dron(model))
         Puntuaciones.append(0.0)
+        Penalizaciones.append(0.0)
         Chocados.append(1)
         
 def ReiniciarDrones():
+    Puntuaciones.clear()
+    Chocados.clear()
+    Penalizaciones.clear()
     for i in range(TamPoblacion):
-        Puntuaciones[i] = 0.0
-        Chocados[i] = 1
-        DronesZona[i] = 0
-        SectorVis[i].clear()
+        Puntuaciones.append(0.0)
+        Penalizaciones.append(0.0)
+        Chocados.append(1)
         
 #Selecciona a los mejores individuos de la generacion como Elite
 def SelecElite():
@@ -232,8 +237,8 @@ def mutarPesos2(pesos):
 #Dado dos modelos crea uno nuevo mezclando sus pesos y aplicando mutarPesos()
 def cruceModelos(padre1, padre2):
 
-    pesos1 = padre1.get_weights()
-    pesos2 = padre2.get_weights()
+    pesos1 = padre1.modelo.get_weights()
+    pesos2 = padre2.modelo.get_weights()
 
     for i in range(len(pesos1)):
         if(i%2 == 0):
@@ -255,7 +260,7 @@ def NuevaGeneracion():
     Modelos.clear()
 
     for x in Elite:
-        Modelos.append(x)
+        Modelos.append(Dron(x))
 
     for x in range(TamPoblacion - TamElite):
         p1 = random.randint(0,TamElite-1)
@@ -264,12 +269,12 @@ def NuevaGeneracion():
             p2 = random.randint(0,TamElite-1)
     
         nuevoHijo = cruceModelos(Elite[p1], Elite[p2])
-        Modelos.append(nuevoHijo)
+        Modelos.append(Dron(nuevoHijo))
 
 #Guarda los modelos de la última elite generada
 def GuardarElite(nombre = 'Generacion1'):
     for xi in range(TamElite):
-        Elite[xi].save_weights(directorio + nombre + ' Individuo' + str(xi) + '.h5')
+        Elite[xi].guardar_modelo(directorio + nombre + ' Individuo' + str(xi) + '.h5')
     print('Elite guardada!')
 
 #Carga los modelos de la élite guardada
@@ -352,7 +357,7 @@ def EntrenarPoblacion(env, behavior_name, spec, n_actions=4):
                 entrada_red = entrada_red.reshape(1, -1)
                 Tensor = tf.constant(entrada_red)
                 
-                pred = Modelos[id].call(Tensor, training=None, mask=None)
+                pred = Modelos[id].prediction(Tensor)
                 pred_array = pred.numpy().flatten()
 
                 if len(historial_acciones[id]) >= n_actions:
@@ -360,7 +365,7 @@ def EntrenarPoblacion(env, behavior_name, spec, n_actions=4):
                 
                 historial_acciones[id].append(pred_array)  # Añadir la nueva acción
 
-                estado = decision_steps[id][0][8]
+                estado = decision_steps[id][0][9]
                 posX = estado[0]
                 posZ = estado[2]
                 
@@ -377,12 +382,12 @@ def EntrenarPoblacion(env, behavior_name, spec, n_actions=4):
                 
                 if estado[3] == 0:
                     Chocados[id] = 0
-                    if(Puntuaciones[id] > 0):
-                        Puntuaciones[id] -= Penalizacion
+                    # if(Puntuaciones[id] > 0):
+                    #     Puntuaciones[id] -= Penalizacion
                     NumChocados = NumChocados + 1
                     
             else:
-                pred = np.array([[0, 0, 0, 0]], dtype = np.float32)
+                pred = np.array([[0, 0]], dtype = np.float32)
             
 
             """
@@ -411,6 +416,9 @@ def EntrenarPoblacion(env, behavior_name, spec, n_actions=4):
                 nuevoMovimiento = pred
                 Movimientos = np.concatenate((Movimientos, nuevoMovimiento), axis=0)
         
+        for i in range(len(Puntuaciones)):
+            Puntuaciones[i] = Modelos[i].puntuacionGrid() + Penalizaciones[i] + len(Modelos[i].zonas_exploradas) * Puntacion_zona_nueva
+
         action.add_continuous(Movimientos)
         env.set_actions(behavior_name, action)
         env.step()
@@ -422,7 +430,7 @@ def EntrenarPoblacion(env, behavior_name, spec, n_actions=4):
                 if(mejorPunt < Puntuaciones[i] and Chocados[i] == 1):
                     mejorPunt = Puntuaciones[i]
                     mejor = i
-            print("Paso: " + str(steps) + " \t| Chocados: " + str(NumChocados) + "\t|Mejor Dron: " + str(mejor) + "\t|Punt del Mejor : " + "%.2f" % mejorPunt + "\t| Zona del Mejor: " + str(DronesZona[mejor]))
+            print("Paso: " + str(steps) + " \t| Chocados: " + str(NumChocados) + "\t|Mejor Dron: " + str(mejor) + "\t|Punt del Mejor : " + "%.2f" % mejorPunt + "\t| Zona del Mejor: " + str(max(Modelos[mejor].zonas_exploradas)))
             
         steps = steps + 1
         
@@ -438,6 +446,12 @@ def EntrenarPoblacion(env, behavior_name, spec, n_actions=4):
             else:
                 auxMP = mejorPunt
         """
+
+def save_stats():
+    max_score = max(Puntuaciones)
+    max_index = Puntuaciones.index(max_score)
+    with open(f"stats.txt", "a") as f:
+        f.write(f"Generación: {Epoca} | Dron: {max_index} | Puntuación: {max_score}\n")
 
 def AjustarMutaciones():
     
@@ -503,10 +517,7 @@ def Entrenar():
                 AjustarMutaciones()
             GuardarDatos()
             GuardarElite('Generacion' + str(Epoca))
-            if(PuntActual > 0):
-                NuevaGeneracion()
-            else:
-                NuevaPoblacion()
+            NuevaGeneracion()
             ReiniciarDrones()
         
         print("Entrenando epoca: " + str(Epoca + 1))
