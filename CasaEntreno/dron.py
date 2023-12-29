@@ -21,6 +21,9 @@ class Dron:
     
     def puntuacionGrid(self):
         return self.grid.puntuacion()
+    
+    def total_cells(self):
+        return self.grid.cell_count()
 
     def prediction(self, inputs):
         return self.modelo.call(inputs, training=None, mask=None)

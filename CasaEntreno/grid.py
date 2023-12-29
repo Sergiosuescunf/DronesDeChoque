@@ -36,3 +36,10 @@ class Grid:
                 if cell.visited:
                     puntuacion += 1
         return puntuacion
+    
+    def cell_count(self):
+        count = 0
+        for row in self.grid:
+            for _ in row:
+                count += 1
+        return count

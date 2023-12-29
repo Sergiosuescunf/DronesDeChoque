@@ -171,6 +171,8 @@ def ReiniciarDrones():
     Chocados.clear()
     Penalizaciones.clear()
     for i in range(TamPoblacion):
+        Modelos[i].zonas_exploradas.clear()
+        Modelos[i].clean_grid()
         Puntuaciones.append(0.0)
         Penalizaciones.append(0.0)
         Chocados.append(1)
@@ -450,8 +452,10 @@ def EntrenarPoblacion(env, behavior_name, spec, n_actions=4):
 def save_stats():
     max_score = max(Puntuaciones)
     max_index = Puntuaciones.index(max_score)
+    max_grid_score = Modelos[max_index].puntuacionGrid()
+    total_cells = Modelos[max_index].total_cells()
     with open(f"stats.txt", "a") as f:
-        f.write(f"Generación: {Epoca} | Dron: {max_index} | Puntuación: {max_score}\n")
+        f.write(f"Generación: {Epoca} | Dron: {max_index} | Puntuación: {max_score} | Casillas exploradas: {max_grid_score} de {total_cells} casillas totales\n")
 
 def AjustarMutaciones():
     
@@ -523,6 +527,8 @@ def Entrenar():
         print("Entrenando epoca: " + str(Epoca + 1))
         EntrenarPoblacion(env, behavior_name, spec)
         Epoca += 1
+
+        save_stats()
         
     env.close()
     print('UwU')
