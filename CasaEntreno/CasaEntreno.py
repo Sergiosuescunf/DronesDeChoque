@@ -72,12 +72,12 @@ Chocados = []
 directorio = ""
 
 #Modelo
-def modelo(n_actions=4):
+def modelo():
     
     bias_init = tf.keras.initializers.he_uniform()
     funct_atc = tf.nn.relu
 
-    n_inputs = 78 + n_actions*N_INPUTS
+    n_inputs = 78 + N_ACTIONS*N_INPUTS
     n_intermediate_inputs =  n_inputs/2
     n_intermediate_inputs_2 = n_intermediate_inputs/2 
   
@@ -161,7 +161,7 @@ def NuevaPoblacion():
     Chocados.clear()
     
     for i in range(TamPoblacion):
-        model = modelo(N_ACTIONS)
+        model = modelo()
         Modelos.append(Dron(model))
         Puntuaciones.append(0.0)
         Penalizaciones.append(0.0)
@@ -251,7 +251,7 @@ def cruceModelos(padre1, padre2):
                         pesos1[i][j][k] = pesos2[i][j][k]
                     pesos1[i+1][k] = pesos2[i+1][k]      
 
-    nuevoModelo = modelo(N_ACTIONS)
+    nuevoModelo = modelo()
     pesos1 = mutarPesos2(pesos1)
     nuevoModelo.set_weights(pesos1)
 
@@ -285,7 +285,7 @@ def CargarElite(nombre = 'Generacion1'):
     Elite.clear()
     for x in range(TamElite):
         path_model = directorio + nombre + ' Individuo' + str(x) + '.h5'
-        new_model = modelo(N_ACTIONS)
+        new_model = modelo()
         new_model.load_weights(path_model)
         Elite.append(Dron(new_model))
     print('Elite cargada!')
@@ -310,7 +310,7 @@ def Normalizar(Laseres):
     return Laseres
 
 #Entrena una población
-def EntrenarPoblacion(env, behavior_name, spec, n_actions=4):
+def EntrenarPoblacion(env, behavior_name, spec):
 
     if(Epoca < 39):
         auxMS = (MaxSteps - 200)//40
@@ -329,7 +329,7 @@ def EntrenarPoblacion(env, behavior_name, spec, n_actions=4):
     action = spec.action_spec.random_action(len(decision_steps))
 
     # Inicializar el historial de acciones para cada agente
-    historial_acciones = {id: [np.zeros(2, dtype=np.float32) for _ in range(n_actions)] for id in range(TamPoblacion)}
+    historial_acciones = {id: [np.zeros(2, dtype=np.float32) for _ in range(N_ACTIONS)] for id in range(TamPoblacion)}
 
     pred = np.array([0, 0, 0, 0], dtype = np.float32)
     
@@ -363,7 +363,7 @@ def EntrenarPoblacion(env, behavior_name, spec, n_actions=4):
                 pred = Modelos[id].prediction(Tensor)
                 pred_array = pred.numpy().flatten()
 
-                if len(historial_acciones[id]) >= n_actions:
+                if len(historial_acciones[id]) >= N_ACTIONS:
                     historial_acciones[id].pop(0)  # Eliminar la acción más antigua si ya tenemos n acciones
                 
                 historial_acciones[id].append(pred_array)  # Añadir la nueva acción
