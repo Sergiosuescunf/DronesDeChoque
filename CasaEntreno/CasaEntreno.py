@@ -7,6 +7,8 @@ import math
 import os
 import time
 
+import argparse
+
 from mlagents_envs.environment import UnityEnvironment
 from mlagents_envs.side_channel.engine_configuration_channel import EngineConfigurationChannel
 
@@ -23,10 +25,23 @@ elif os_name == 'nt':
     FILE_NAME = 'CasaEntreno.exe'
     CLEAR_COMMAND = 'cls'
 
+parser = argparse.ArgumentParser(description="Especifica los parámetros de la arquitectura y del entrenamiento.")
+
+# Define los argumentos que aceptará el programa
+parser.add_argument("-i", "--inputs", type=int, help="Number of inputs", default=2)
+parser.add_argument("-a", "--actions", type=int, help="Number of previous actions", required=True)
+parser.add_argument("-g", "--generation", type=int, help="Number of generation to start", default=0)
+parser.add_argument("-mg", "--max_generations", type=int, help="Max number of generations", default=100)
+parser.add_argument("-ps", "--population_size", type=int, help="Number of individuals per generation", default=200)
+parser.add_argument("-es", "--elite_size", type=int, help="Number of elite individuals per generation", default=10)
+
+# Analiza los argumentos
+args = parser.parse_args()
+
 # Normalize score by grid and penalty and add weights (coefficients)
 
-N_INPUTS = 2
-N_ACTIONS = 6
+N_INPUTS = args.inputs 
+N_ACTIONS = args.actions 
 
 # Score attributes
 NumZones = 0
@@ -38,12 +53,12 @@ MaxDistance = 0.3
 Zones = [] 
 
 # Population Variables
-PopulationSize = 200 
-EliteSize = 10
+PopulationSize = args.population_size
+EliteSize = args.elite_size
 Epoch = 0
-GameEpoch = 0
-MaxEpochs = 2
-MaxSteps = 2000
+GameEpoch = args.generation  
+MaxEpochs = args.max_generations 
+MaxSteps = 3000
 
 # Normalize Lasers
 normalize = True
@@ -68,7 +83,7 @@ PreviousScore = 0
 Crashed = []
 
 # Save directory
-directory = ""
+directory = f"Elite_simple_{N_ACTIONS}_actions_dinamic_arquitecture/Experiment1/"
 
 # Model
 def create_model():
@@ -439,7 +454,7 @@ def save_stats():
     max_index = Scores.index(max_score)
     max_grid_score = Models[max_index].grid_score()
     total_cells = Models[max_index].total_cells()
-    with open(f"stats.txt", "a") as f:
+    with open(f"{directory}/stats.txt", "a") as f:
         f.write(f"Generation: {Epoch} | Drone: {max_index} | Score: {max_score} | Explored Cells: {max_grid_score} of {total_cells} total cells\n")
 
 def AdjustMutations():
@@ -468,14 +483,14 @@ def Train():
     global CurrentScore
     global PastScore
     
-    Epoch = StartEpoch
+    Epoch = GameEpoch
     CurrentScore = 0
     PastScore = 0
 
     NewPopulation()
     
-    if(StartEpoch != 0):
-        aux = "Generation" + str(StartEpoch)
+    if(GameEpoch != 0):
+        aux = "Generation" + str(GameEpoch)
         LoadElite(aux)
         NewGeneration()
 
@@ -496,7 +511,7 @@ def Train():
     if spec.action_spec.is_discrete():
         print(f"There are {spec.action_spec.discrete_size} discrete actions")
 
-    for i in range(MaxEpochs - StartEpoch):
+    for i in range(MaxEpochs - GameEpoch):
         
         if(i != 0):
             SelectElite()
@@ -522,7 +537,7 @@ def ShowPopulation():
     
     global Epoch
     
-    Epoch = StartEpoch
+    Epoch = GameEpoch
     
     NewPopulation()
     
@@ -570,11 +585,8 @@ def CreateDirectory():
 
 def Start():
     
-    global StartEpoch
-    StartEpoch = 0
-    
-    global directory
-    directory = "Elite/Experiment1/"
+    global GameEpoch
+    GameEpoch = 0
 
     CreateDirectory()
     LoadMap()
