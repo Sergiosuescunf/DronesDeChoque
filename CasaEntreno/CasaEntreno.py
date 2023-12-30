@@ -12,324 +12,318 @@ from mlagents_envs.side_channel.engine_configuration_channel import EngineConfig
 
 from tensorflow import keras
 from keras import models, layers
-from dron import *
+from drone import *
 
+os_name = os.name
 
-so = os.name
-
-if so == 'posix':
+if os_name == 'posix':
     FILE_NAME = 'CasaEntreno.x86_64'
     CLEAR_COMMAND = 'clear'
-elif so == 'nt':
+elif os_name == 'nt':
     FILE_NAME = 'CasaEntreno.exe'
     CLEAR_COMMAND = 'cls'
 
-# Normalizar puntacion por grid y penalizacion y añadir pesos (coeficientes)
+# Normalize score by grid and penalty and add weights (coefficients)
 
 N_INPUTS = 2
 N_ACTIONS = 6
 
-#Atributos de puntuacion
-NumZonas = 0
-ZonasPunt = 50
-Penalizacion = 40
-Penalizacion_cercania = 20
-Puntacion_zona_nueva = 100
-Distancia_maxima = 0.3
-Zonas = [] 
+# Score attributes
+NumZones = 0
+ZoneScore = 50
+Penalty = 40
+ProximityPenalty = 20
+NewZoneScore = 100
+MaxDistance = 0.3
+Zones = [] 
 
-#Variables Poblacion
-TamPoblacion = 200 
-TamElite = 10
-Epoca = 0
-EpocaPartida = 0
-MaxEpocas = 100
+# Population Variables
+PopulationSize = 200 
+EliteSize = 10
+Epoch = 0
+GameEpoch = 0
+MaxEpochs = 2
 MaxSteps = 2000
 
-#Normalizar Láseres
-normalizar = True
+# Normalize Lasers
+normalize = True
 
-#Variables de Mutacion
-AjustMutacion = False
-ProbMuta = 0.1
-IndiceMuta = 0.1
+# Mutation Variables
+AdjustMutation = False
+MutationProb = 0.1
+MutationRate = 0.1
 
-IncrPM = 0.1 #Incremento de la probabilidad de mutacion
-IncrIM = 0.2 #Incremento del índice de mutacion
-MaxPM = .25
-MaxIM = 0.2
+IncrMP = 0.1 # Increment of mutation probability
+IncrMR = 0.2 # Increment of mutation rate
+MaxMP = .25
+MaxMR = 0.2
 
-#Atributos Poblacion
-Modelos = []
+# Population Attributes
+Models = []
 Elite = []
-Puntuaciones = [] 
-Penalizaciones = []
-PuntActual = 0
-PuntPasada = 0
-Chocados = []
+Scores = [] 
+Penalties = []
+CurrentScore = 0
+PreviousScore = 0
+Crashed = []
 
-#Directorio de guardado
-directorio = ""
+# Save directory
+directory = ""
 
-#Modelo
-def modelo():
+# Model
+def create_model():
     
     bias_init = tf.keras.initializers.he_uniform()
-    funct_atc = tf.nn.relu
+    activation_func = tf.nn.relu
 
     n_inputs = 78 + N_ACTIONS*N_INPUTS
     n_intermediate_inputs =  n_inputs/2
     n_intermediate_inputs_2 = n_intermediate_inputs/2 
   
     model = models.Sequential()
-    model.add(layers.Dense(n_intermediate_inputs, input_shape = (n_inputs,), bias_initializer=bias_init, activation = funct_atc)) # type: ignore
-    model.add(layers.Dense(n_intermediate_inputs_2, bias_initializer=bias_init, activation = funct_atc)) # type: ignore
-    model.add(layers.Dense(2, bias_initializer=bias_init, activation = tf.nn.tanh)) # type: ignore
-  
-    # model = models.Sequential()
-    # model.add(layers.Dense(16, input_shape = (n_inputs,), bias_initializer=bias_init, activation = funct_atc)) # type: ignore
-    # model.add(layers.Dense(8, bias_initializer=bias_init, activation = funct_atc)) # type: ignore
-    # model.add(layers.Dense(2, bias_initializer=bias_init, activation = tf.nn.tanh)) # type: ignore
+    model.add(layers.Dense(n_intermediate_inputs, input_shape = (n_inputs,), bias_initializer=bias_init, activation = activation_func))
+    model.add(layers.Dense(n_intermediate_inputs_2, bias_initializer=bias_init, activation = activation_func))
+    model.add(layers.Dense(2, bias_initializer=bias_init, activation = tf.nn.tanh))
 
     return model
 
-def distEuclidea(p1, p2):
+def EuclideanDistance(p1, p2):
   return math.sqrt((p1[0]-p2[0])**2+(p1[1]-p2[1])**2)
 
-def EstablecerZonas():
+def SetZones():
     
-    global Zonas
-    global NumZonas
+    global Zones
+    global NumZones
     
-    Zonas.clear()
-    Zonas.append((-13, -6, -2, 0))
-    Zonas.append((-13, -14, -2, -6))
-    Zonas.append((-2, -14, 15, 0))
-    Zonas.append((-13, 0, 15, 13))
+    Zones.clear()
+    Zones.append((-13, -6, -2, 0))
+    Zones.append((-13, -14, -2, -6))
+    Zones.append((-2, -14, 15, 0))
+    Zones.append((-13, 0, 15, 13))
 
-    NumZonas = len(Zonas)
+    NumZones = len(Zones)
         
-def CargarMapa():
-    EstablecerZonas()
+def LoadMap():
+    SetZones()
     
-def CalcularZona(x, z):
+def CalculateZone(x, z):
     
-    for i in range(NumZonas):
+    for i in range(NumZones):
         
-        x0 = Zonas[i][0]
-        z0 = Zonas[i][1]
-        x1 = Zonas[i][2]
-        z1 = Zonas[i][3]
+        x0 = Zones[i][0]
+        z0 = Zones[i][1]
+        x1 = Zones[i][2]
+        z1 = Zones[i][3]
             
         if(x > x0 and x < x1 and z > z0 and z < z1):
             return i
         
     return 0
 
-def CalcularPunt(id, x, z):
+def CalculateScore(id, x, z):
     
-    zona = CalcularZona(x, z)
+    zone = CalculateZone(x, z)
     
-    if(zona not in Modelos[id].zonas_exploradas):
-        Modelos[id].zonas_exploradas.append(zona)
+    if(zone not in Models[id].explored_zones):
+        Models[id].explored_zones.append(zone)
     
-    Modelos[id].updateGrid(x,z) 
+    Models[id].update_grid(x,z) 
 
-def PenalizacionDistancia(distancia):
-    return -Penalizacion_cercania * (Distancia_maxima - distancia)/Distancia_maxima 
+def DistancePenalty(distance):
+    return -ProximityPenalty * (MaxDistance - distance)/MaxDistance 
 
-def CalcularPenalizacionDistancia(id, dist_cent, dist_izq, dist_der):
+def CalculateDistancePenalty(id, dist_center, dist_left, dist_right):
 
-    if dist_cent <= Distancia_maxima:
-        pen_cent = PenalizacionDistancia(dist_cent)
-        Penalizaciones[id] += pen_cent
+    if dist_center <= MaxDistance:
+        pen_center = DistancePenalty(dist_center)
+        Penalties[id] += pen_center
 
-    if dist_izq <= Distancia_maxima:
-        pen_izq = PenalizacionDistancia(dist_izq)
-        Penalizaciones[id] += pen_izq
+    if dist_left <= MaxDistance:
+        pen_left = DistancePenalty(dist_left)
+        Penalties[id] += pen_left
 
-    if dist_der <= Distancia_maxima:
-        pen_der = PenalizacionDistancia(dist_der)
-        Penalizaciones[id] += pen_der
+    if dist_right <= MaxDistance:
+        pen_right = DistancePenalty(dist_right)
+        Penalties[id] += pen_right
 
-#Genera una nueva poblacion desde 0
-def NuevaPoblacion():
+# Generates a new population from scratch
+def NewPopulation():
     
-    Modelos.clear()
-    Puntuaciones.clear()
-    Penalizaciones.clear()
-    Chocados.clear()
+    Models.clear()
+    Scores.clear()
+    Penalties.clear()
+    Crashed.clear()
     
-    for i in range(TamPoblacion):
-        model = modelo()
-        Modelos.append(Dron(model))
-        Puntuaciones.append(0.0)
-        Penalizaciones.append(0.0)
-        Chocados.append(1)
+    for i in range(PopulationSize):
+        model = create_model()
+        Models.append(Drone(model))
+        Scores.append(0.0)
+        Penalties.append(0.0)
+        Crashed.append(1)
         
-def ReiniciarDrones():
-    Puntuaciones.clear()
-    Chocados.clear()
-    Penalizaciones.clear()
-    for i in range(TamPoblacion):
-        Modelos[i].zonas_exploradas.clear()
-        Modelos[i].clean_grid()
-        Puntuaciones.append(0.0)
-        Penalizaciones.append(0.0)
-        Chocados.append(1)
+def ResetDrones():
+    Scores.clear()
+    Crashed.clear()
+    Penalties.clear()
+    for i in range(PopulationSize):
+        Models[i].explored_zones.clear()
+        Models[i].clean_grid()
+        Scores.append(0.0)
+        Penalties.append(0.0)
+        Crashed.append(1)
         
-#Selecciona a los mejores individuos de la generacion como Elite
-def SelecElite():
+# Selects the best individuals of the generation as Elite
+def SelectElite():
     
-    global PuntActual
+    global CurrentScore
     
     Elite.clear()
-    PuntActual = 0
+    CurrentScore = 0
 
     pos = 0
     aux = []
-    for x in range(TamElite):
-        mejor = -9999
-        for i in range(len(Modelos)):
-            if(Puntuaciones[i] > mejor and not (i in aux)):
-                mejor = Puntuaciones[i]
+    for x in range(EliteSize):
+        best = -9999
+        for i in range(len(Models)):
+            if(Scores[i] > best and not (i in aux)):
+                best = Scores[i]
                 pos = i
         aux.append(pos)
         
     os.system(CLEAR_COMMAND)
             
     for x in aux:
-        print("Coche:", x, end=" ")
-        print("Punt:", "%.2f" % Puntuaciones[x])
+        print("Drone:", x, end=" ")
+        print("Score:", "%.2f" % Scores[x])
         
-        PuntActual += Puntuaciones[x]
-        Elite.append(Modelos[x])
+        CurrentScore += Scores[x]
+        Elite.append(Models[x])
 
-#Dado unos pesos aplica a cada uno una probabilidad de mutar(ProbMuta) un cierto indice(IndiceMuta)
-def mutarPesos(pesos):
-    for i in range(len(pesos)):
+# Given some weights, applies a chance to mutate each one based on MutationProb and MutationRate
+def mutateWeights(weights):
+    for i in range(len(weights)):
         if(i%2 == 0):
-            for j in range(len(pesos[i])):
-                for k in range(len(pesos[i][j])):
-                    if(random.uniform(0,1) < ProbMuta):
-                        cambio = random.uniform(- IndiceMuta, IndiceMuta)
-                        pesos[i][j][k] += cambio
-        else: #Bias
-            for j in range(len(pesos[i])):
-                if(random.uniform(0,1) < ProbMuta):
-                    cambio = random.uniform(- IndiceMuta, IndiceMuta)
-                    pesos[i][j] += cambio
-    return pesos
+            for j in range(len(weights[i])):
+                for k in range(len(weights[i][j])):
+                    if(random.uniform(0,1) < MutationProb):
+                        change = random.uniform(- MutationRate, MutationRate)
+                        weights[i][j][k] += change
+        else: # Bias
+            for j in range(len(weights[i])):
+                if(random.uniform(0,1) < MutationProb):
+                    change = random.uniform(- MutationRate, MutationRate)
+                    weights[i][j] += change
+    return weights
 
-#Dado unos pesos aplica a cada neurona una probabilidad de mutar(ProbMuta) un cierto indice(IndiceMuta)
-def mutarPesos2(pesos):
-    for i in range(len(pesos)):
+# Given some weights, applies a chance to mutate each neuron based on MutationProb and MutationRate
+def mutateWeights2(weights):
+    for i in range(len(weights)):
         if(i%2 == 0):
-            for k in range(len(pesos[i][0])):
-                if(random.uniform(0,1) < ProbMuta):
-                    for j in range(len(pesos[i])):
-                        cambio = random.uniform(- IndiceMuta, IndiceMuta)
-                        pesos[i][j][k] += cambio
-        else: #Bias
-            for j in range(len(pesos[i])):
-                if(random.uniform(0,1) < ProbMuta):
-                    cambio = random.uniform(- IndiceMuta, IndiceMuta)
-                    pesos[i][j] += cambio
-    return pesos
+            for k in range(len(weights[i][0])):
+                if(random.uniform(0,1) < MutationProb):
+                    for j in range(len(weights[i])):
+                        change = random.uniform(- MutationRate, MutationRate)
+                        weights[i][j][k] += change
+        else: # Bias
+            for j in range(len(weights[i])):
+                if(random.uniform(0,1) < MutationProb):
+                    change = random.uniform(- MutationRate, MutationRate)
+                    weights[i][j] += change
+    return weights
 
-#Dado dos modelos crea uno nuevo mezclando sus pesos y aplicando mutarPesos()
-def cruceModelos(padre1, padre2):
+# Given two models, creates a new one by mixing their weights and applying mutateWeights()
+def CrossModels(parent1, parent2):
 
-    pesos1 = padre1.modelo.get_weights()
-    pesos2 = padre2.modelo.get_weights()
+    weights1 = parent1.model.get_weights()
+    weights2 = parent2.model.get_weights()
 
-    for i in range(len(pesos1)):
+    for i in range(len(weights1)):
         if(i%2 == 0):
-            for k in range(len(pesos1[i][0])):
+            for k in range(len(weights1[i][0])):
                 if(random.randint(0,1) == 0):
-                    for j in range(len(pesos1[i])):
-                        pesos1[i][j][k] = pesos2[i][j][k]
-                    pesos1[i+1][k] = pesos2[i+1][k]      
+                    for j in range(len(weights1[i])):
+                        weights1[i][j][k] = weights2[i][j][k]
+                    weights1[i+1][k] = weights2[i+1][k]      
 
-    nuevoModelo = modelo()
-    pesos1 = mutarPesos2(pesos1)
-    nuevoModelo.set_weights(pesos1)
+    newModel = create_model()
+    weights1 = mutateWeights2(weights1)
+    newModel.set_weights(weights1)
 
-    return nuevoModelo
+    return newModel
 
-#Genera una poblacion nueva a partir de la Elite
-def NuevaGeneracion():
+# Generates a new population from the Elite
+def NewGeneration():
 
-    Modelos.clear()
+    Models.clear()
 
     for x in Elite:
-        Modelos.append(x)
+        Models.append(x)
 
-    for x in range(TamPoblacion - TamElite):
-        p1 = random.randint(0,TamElite-1)
-        p2 = random.randint(0,TamElite-1)
+    for x in range(PopulationSize - EliteSize):
+        p1 = random.randint(0,EliteSize-1)
+        p2 = random.randint(0,EliteSize-1)
         while(p1 == p2):
-            p2 = random.randint(0,TamElite-1)
+            p2 = random.randint(0,EliteSize-1)
     
-        nuevoHijo = cruceModelos(Elite[p1], Elite[p2])
-        Modelos.append(Dron(nuevoHijo))
+        newChild = CrossModels(Elite[p1], Elite[p2])
+        Models.append(Drone(newChild))
 
-#Guarda los modelos de la última elite generada
-def GuardarElite(nombre = 'Generacion1'):
-    for xi in range(TamElite):
-        Elite[xi].guardar_modelo(directorio + nombre + ' Individuo' + str(xi) + '.h5')
-    print('Elite guardada!')
+# Saves the models of the last generated elite
+def SaveElite(name = 'Generation1'):
+    for xi in range(EliteSize):
+        Elite[xi].save_model(directory + name + ' Individual' + str(xi) + '.h5')
+    print('Elite saved!')
 
-#Carga los modelos de la élite guardada
-def CargarElite(nombre = 'Generacion1'):
+# Loads the models of the saved elite
+def LoadElite(name = 'Generation1'):
     Elite.clear()
-    for x in range(TamElite):
-        path_model = directorio + nombre + ' Individuo' + str(x) + '.h5'
-        new_model = modelo()
+    for x in range(EliteSize):
+        path_model = directory + name + ' Individual' + str(x) + '.h5'
+        new_model = create_model()
         new_model.load_weights(path_model)
-        Elite.append(Dron(new_model))
-    print('Elite cargada!')
+        Elite.append(Drone(new_model))
+    print('Elite loaded!')
 
-#Normaliza los valores de los láseres entre 0 y 1
-def Normalizar(Laseres):
+# Normalizes the values of the lasers between 0 and 1
+def Normalize(Lasers):
     
-    min = 1.0
-    max = 0.0
+    min_val = 1.0
+    max_val = 0.0
     
-    for i in range(len(Laseres[0])):
-        if Laseres[0][i] < min:
-            min = Laseres[0][i]
-        if Laseres[0][i] > max:
-            max = Laseres[0][i]
+    for i in range(len(Lasers[0])):
+        if Lasers[0][i] < min_val:
+            min_val = Lasers[0][i]
+        if Lasers[0][i] > max_val:
+            max_val = Lasers[0][i]
     
-    diff = max - min
+    diff = max_val - min_val
     
-    for i in range(len(Laseres[0])):
-        Laseres[0][i] = (Laseres[0][i] - min) / diff
+    for i in range(len(Lasers[0])):
+        Lasers[0][i] = (Lasers[0][i] - min_val) / diff
         
-    return Laseres
+    return Lasers
 
-#Entrena una población
-def EntrenarPoblacion(env, behavior_name, spec):
+# Trains a population
+def TrainPopulation(env, behavior_name, spec):
 
-    if(Epoca < 39):
+    if(Epoch < 39):
         auxMS = (MaxSteps - 200)//40
-        FinalStep = auxMS * (Epoca + 1) + 200
+        FinalStep = auxMS * (Epoch + 1) + 200
     else:
         FinalStep = MaxSteps
         
     steps = 0
-    NumChocados = 0
-    mejor = 0
-    camara = 0
-    mejorPunt = 0
+    NumCrashed = 0
+    best = 0
+    camera = 0
+    bestScore = 0
     
     env.reset()
     decision_steps, terminal_steps = env.get_steps(behavior_name)
     action = spec.action_spec.random_action(len(decision_steps))
 
-    # Inicializar el historial de acciones para cada agente
-    historial_acciones = {id: [np.zeros(2, dtype=np.float32) for _ in range(N_ACTIONS)] for id in range(TamPoblacion)}
+    # Initialize the action history for each agent
+    action_history = {id: [np.zeros(2, dtype=np.float32) for _ in range(N_ACTIONS)] for id in range(PopulationSize)}
 
     pred = np.array([0, 0, 0, 0], dtype = np.float32)
     
@@ -337,163 +331,153 @@ def EntrenarPoblacion(env, behavior_name, spec):
     while not done:
         
         decision_steps, terminal_steps = env.get_steps(behavior_name)
-        Movimientos = [[]]
+        Movements = [[]]
         
         for id in decision_steps.agent_id:
                 
-            if(Chocados[id] == 1):
+            if(Crashed[id] == 1):
                 
-                Laseres = np.atleast_2d([])
+                Lasers = np.atleast_2d([])
                 
                 for i in range(7):
                     laser = decision_steps[id][0][i]
-                    lectura = np.atleast_2d([laser[21], laser[17], laser[13], laser[9], laser[5], laser[1], laser[3], laser[7], laser[11], laser[15], laser[19]])
-                    Laseres  = np.concatenate((Laseres, lectura), axis=1)
+                    reading = np.atleast_2d([laser[21], laser[17], laser[13], laser[9], laser[5], laser[1], laser[3], laser[7], laser[11], laser[15], laser[19]])
+                    Lasers  = np.concatenate((Lasers, reading), axis=1)
                 
-                altura = np.atleast_2d([decision_steps[id][0][7][1]])
-                if(normalizar):
-                    Laseres = Normalizar(Laseres)
-                Laseres = np.concatenate((Laseres, altura), axis=1)
+                height = np.atleast_2d([decision_steps[id][0][7][1]])
+                if(normalize):
+                    Lasers = Normalize(Lasers)
+                Lasers = np.concatenate((Lasers, height), axis=1)
 
-                historial_aplanado = np.concatenate([accion.flatten() for accion in historial_acciones[id]])
-                entrada_red = np.concatenate([Laseres.flatten(), historial_aplanado])
-                entrada_red = entrada_red.reshape(1, -1)
-                Tensor = tf.constant(entrada_red)
+                flattened_history = np.concatenate([action.flatten() for action in action_history[id]])
+                network_input = np.concatenate([Lasers.flatten(), flattened_history])
+                network_input = network_input.reshape(1, -1)
+                Tensor = tf.constant(network_input)
                 
-                pred = Modelos[id].prediction(Tensor)
+                pred = Models[id].prediction(Tensor)
                 pred_array = pred.numpy().flatten()
 
-                if len(historial_acciones[id]) >= N_ACTIONS:
-                    historial_acciones[id].pop(0)  # Eliminar la acción más antigua si ya tenemos n acciones
+                if len(action_history[id]) >= N_ACTIONS:
+                    action_history[id].pop(0)  # Remove the oldest action if we already have n actions
                 
-                historial_acciones[id].append(pred_array)  # Añadir la nueva acción
+                action_history[id].append(pred_array)  # Add the new action
 
-                estado = decision_steps[id][0][9]
-                posX = estado[0]
-                posZ = estado[2]
+                state = decision_steps[id][0][9]
+                posX = state[0]
+                posZ = state[2]
                 
-                CalcularPunt(id, posX, posZ)
+                CalculateScore(id, posX, posZ)
 
-                dist_cent = decision_steps[id][0][8][1]
-                dist_izq = decision_steps[id][0][8][3]
-                dist_der = decision_steps[id][0][8][5]
+                dist_center = decision_steps[id][0][8][1]
+                dist_left = decision_steps[id][0][8][3]
+                dist_right = decision_steps[id][0][8][5]
 
-                CalcularPenalizacionDistancia(id, dist_cent, dist_izq, dist_der)
+                CalculateDistancePenalty(id, dist_center, dist_left, dist_right)
                 
-                if(Chocados[id] == 0):
-                    NumChocados += 1
+                if(Crashed[id] == 0):
+                    NumCrashed += 1
                 
-                if estado[3] == 0:
-                    Chocados[id] = 0
-                    # if(Puntuaciones[id] > 0):
-                    #     Puntuaciones[id] -= Penalizacion
-                    NumChocados = NumChocados + 1
+                if state[3] == 0:
+                    Crashed[id] = 0
+                    NumCrashed = NumCrashed + 1
                     
             else:
                 pred = np.array([[0, 0]], dtype = np.float32)
             
 
-            """
-            if(Chocados[id] == 1 and Sectores[id] == NumZonas - 1):
-                Chocados[id] = 0
-                Puntuaciones[id] += (MaxSteps - steps)/100
-                NumMeta = NumMeta + 1
-                pred = np.concatenate((pred, np.array([[0.4]])), axis=1) 
-            """    
-            
-            if(Chocados[id] == 0):
+            if(Crashed[id] == 0):
                 pred = np.concatenate((pred, np.array([[0.1]])), axis=1)
             elif(id == 0 and steps < 11):
                 pred = np.concatenate((pred, np.array([[0.2]])), axis=1)
-            elif(Chocados[camara] == 0 and id == mejor):
+            elif(Crashed[camera] == 0 and id == best):
                 pred = np.concatenate((pred, np.array([[0.2]])), axis=1)
-                camara = id
-            elif(id < TamElite):
+                camera = id
+            elif(id < EliteSize):
                 pred = np.concatenate((pred, np.array([[0.3]])), axis=1)    
             else:
                 pred = np.concatenate((pred, np.array([[0]])), axis=1)
 
-            if len(Movimientos[0]) == 0:
-                Movimientos = pred
+            if len(Movements[0]) == 0:
+                Movements = pred
             else:
-                nuevoMovimiento = pred
-                Movimientos = np.concatenate((Movimientos, nuevoMovimiento), axis=0)
+                newMovement = pred
+                Movements = np.concatenate((Movements, newMovement), axis=0)
         
-        for i in range(len(Puntuaciones)):
-            Puntuaciones[i] = Modelos[i].puntuacionGrid() + Penalizaciones[i] + len(Modelos[i].zonas_exploradas) * Puntacion_zona_nueva
+        for i in range(len(Scores)):
+            Scores[i] = Models[i].grid_score() + Penalties[i] + len(Models[i].explored_zones) * NewZoneScore
 
-        action.add_continuous(Movimientos)
+        action.add_continuous(Movements)
         env.set_actions(behavior_name, action)
         env.step()
             
         if(steps % 25 == 0):
-            mejorPunt = 0
-            mejor = 0
-            for i in range(TamPoblacion):
-                if(mejorPunt < Puntuaciones[i] and Chocados[i] == 1):
-                    mejorPunt = Puntuaciones[i]
-                    mejor = i
-            print("Paso: " + str(steps) + " \t| Chocados: " + str(NumChocados) + "\t|Mejor Dron: " + str(mejor) + "\t|Punt del Mejor : " + "%.2f" % mejorPunt + "\t| Zona del Mejor: " + str(max(Modelos[mejor].zonas_exploradas)))
+            bestScore = 0
+            best = 0
+            for i in range(PopulationSize):
+                if(bestScore < Scores[i] and Crashed[i] == 1):
+                    bestScore = Scores[i]
+                    best = i
+            print("Step: " + str(steps) + " \t| Crashed: " + str(NumCrashed) + "\t|Best Drone: " + str(best) + "\t|Score of the Best : " + "%.2f" % bestScore + "\t| Zone of the Best: " + str(max(Models[best].explored_zones)))
             
         steps = steps + 1
         
         if(steps >= FinalStep):
             done = True
-        if(NumChocados >= TamPoblacion):
+        if(NumCrashed >= PopulationSize):
             done = True
         
         """ 
         if(steps % 100 == 0):
-            if(auxMP == mejorPunt):
+            if(auxBestScore == bestScore):
                 done = True
             else:
-                auxMP = mejorPunt
+                auxBestScore = bestScore
         """
 
 def save_stats():
-    max_score = max(Puntuaciones)
-    max_index = Puntuaciones.index(max_score)
-    max_grid_score = Modelos[max_index].puntuacionGrid()
-    total_cells = Modelos[max_index].total_cells()
+    max_score = max(Scores)
+    max_index = Scores.index(max_score)
+    max_grid_score = Models[max_index].grid_score()
+    total_cells = Models[max_index].total_cells()
     with open(f"stats.txt", "a") as f:
-        f.write(f"Generación: {Epoca} | Dron: {max_index} | Puntuación: {max_score} | Casillas exploradas: {max_grid_score} de {total_cells} casillas totales\n")
+        f.write(f"Generation: {Epoch} | Drone: {max_index} | Score: {max_score} | Explored Cells: {max_grid_score} of {total_cells} total cells\n")
 
-def AjustarMutaciones():
+def AdjustMutations():
     
-    global PuntActual
-    global PuntPasada
-    global ProbMuta
-    global IndiceMuta
+    global CurrentScore
+    global PastScore
+    global MutaProb
+    global MutaIndex
     
-    ProbMuta = 10 / (PuntActual/5 + 10)
+    MutaProb = 10 / (CurrentScore/5 + 10)
     
-    with open(directorio + '/Datos.txt', 'a') as f:
-        if(Epoca == 0):
-            f.write(str(IncrPM) + " | " + str(MaxPM) + " | " + str(IncrIM) + " | " + str(MaxIM) + '\n')
+    with open(directory + '/Data.txt', 'a') as f:
+        if(Epoch == 0):
+            f.write(str(IncrMP) + " | " + str(MaxMP) + " | " + str(IncrMR) + " | " + str(MaxMR) + '\n')
         
-    PuntPasada = PuntActual
+    PastScore = CurrentScore
 
-def GuardarDatos():
+def SaveData():
     
-    with open(directorio + '/Datos.txt', 'a') as f:
-        f.write(str(PuntActual) + '\n')
+    with open(directory + '/Data.txt', 'a') as f:
+        f.write(str(CurrentScore) + '\n')
 
-def Entrenar():
+def Train():
     
-    global Epoca
-    global PuntActual
-    global PuntPasada
+    global Epoch
+    global CurrentScore
+    global PastScore
     
-    Epoca = EpocaPartida
-    PuntActual = 0
-    PuntPasada = 0
+    Epoch = StartEpoch
+    CurrentScore = 0
+    PastScore = 0
 
-    NuevaPoblacion()
+    NewPopulation()
     
-    if(EpocaPartida != 0):
-        aux = "Generacion" + str(EpocaPartida)
-        CargarElite(aux)
-        NuevaGeneracion()
+    if(StartEpoch != 0):
+        aux = "Generation" + str(StartEpoch)
+        LoadElite(aux)
+        NewGeneration()
 
     channel = EngineConfigurationChannel()
     channel.set_configuration_parameters(height=1024, width=1024)
@@ -512,40 +496,39 @@ def Entrenar():
     if spec.action_spec.is_discrete():
         print(f"There are {spec.action_spec.discrete_size} discrete actions")
 
-    for i in range(MaxEpocas - EpocaPartida):
+    for i in range(MaxEpochs - StartEpoch):
         
         if(i != 0):
-            SelecElite()
-            print("PuntActual:", PuntActual, ", PuntPasada:", PuntPasada) 
-            #print("ProbMuta:", ProbMuta, ", IndiceMuta:", IndiceMuta)
-            if(AjustMutacion):
-                AjustarMutaciones()
-            GuardarDatos()
-            GuardarElite('Generacion' + str(Epoca))
-            NuevaGeneracion()
-            ReiniciarDrones()
+            SelectElite()
+            print("CurrentScore:", CurrentScore, ", PastScore:", PastScore) 
+            #print("MutaProb:", MutaProb, ", MutaIndex:", MutaIndex)
+            if(AdjustMutation):
+                AdjustMutations()
+            SaveData()
+            SaveElite('Generation' + str(Epoch))
+            NewGeneration()
+            ResetDrones()
         
-        print("Entrenando epoca: " + str(Epoca + 1))
-        EntrenarPoblacion(env, behavior_name, spec)
-        Epoca += 1
+        print("Training epoch: " + str(Epoch + 1))
+        TrainPopulation(env, behavior_name, spec)
+        Epoch += 1
 
         save_stats()
         
     env.close()
     print('UwU')
     
-def MostrarPoblacion():
+def ShowPopulation():
     
-    global Epoca
+    global Epoch
     
-    Epoca = EpocaPartida
+    Epoch = StartEpoch
     
-    NuevaPoblacion()
+    NewPopulation()
     
-    aux = "Generacion" + str(1)
-    CargarElite(aux)
-    NuevaGeneracion()
-
+    aux = "Generation" + str(1)
+    LoadElite(aux)
+    NewGeneration()
 
     
     env = UnityEnvironment(file_name=FILE_NAME, seed=1, side_channels=[])
@@ -566,37 +549,37 @@ def MostrarPoblacion():
     for i in range(6):
 
         if(i != 0):
-            Epoca = i*5 + 1
-            aux = "Generacion" + str(Epoca)
+            Epoch = i*5 + 1
+            aux = "Generation" + str(Epoch)
             env.reset()
-            ReiniciarDrones()
-            CargarElite(aux)
-            NuevaGeneracion()
+            ResetDrones()
+            LoadElite(aux)
+            NewGeneration()
 
-        print("Mostrando epoca: " + str(Epoca + 1))
-        EntrenarPoblacion(env, behavior_name, spec)
+        print("Showing epoch: " + str(Epoch + 1))
+        TrainPopulation(env, behavior_name, spec)
 
-def CrearDirectorio():
+def CreateDirectory():
 
     path = ""
-    for folder_path in directorio.split("/"):
+    for folder_path in directory.split("/"):
         path += folder_path+"/"
         if not os.path.exists(f"{path}"):
             os.makedirs(f"{path}")
 
 
-def Comienzo():
+def Start():
     
-    global EpocaPartida
-    EpocaPartida = 0
+    global StartEpoch
+    StartEpoch = 0
     
-    global directorio
-    directorio = "Elite/Experimento1/"
+    global directory
+    directory = "Elite/Experiment1/"
 
-    CrearDirectorio()
-    CargarMapa()
-    #MostrarPoblacion()
-    Entrenar()
+    CreateDirectory()
+    LoadMap()
+    #ShowPopulation()
+    Train()
 
 if __name__ == '__main__':
-    Comienzo()
+    Start()

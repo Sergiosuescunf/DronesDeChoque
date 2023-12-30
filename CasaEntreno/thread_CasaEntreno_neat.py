@@ -13,7 +13,7 @@ from neat.checkpoint import Checkpointer
 from mlagents_envs.environment import UnityEnvironment
 from tensorflow import keras
 from keras import models, layers
-from dron import *
+from drone import *
 
 so = os.name
 
@@ -381,7 +381,7 @@ def Entrenar():
         population.add_reporter(stats)
         EpocaPartida = 0
 
-    Modelos = [Dron(config) for i in range(TamPoblacion)]
+    Modelos = [Drone(config) for i in range(TamPoblacion)]
 
     for generation in range(MaxEpocas - EpocaPartida):
         ReiniciarGeneracion()

@@ -29,13 +29,13 @@ class Grid:
         cell = self.get_cell(x, z)
         cell.visited = True
 
-    def puntuacion(self):
-        puntuacion = 0
+    def puntuation(self):
+        puntuation = 0
         for row in self.grid:
             for cell in row:
                 if cell.visited:
-                    puntuacion += 1
-        return puntuacion
+                    puntuation += 1
+        return puntuation
     
     def cell_count(self):
         count = 0
