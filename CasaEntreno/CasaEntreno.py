@@ -27,6 +27,7 @@ elif so == 'nt':
 # Normalizar puntacion por grid y penalizacion y añadir pesos (coeficientes)
 
 N_INPUTS = 2
+N_ACTIONS = 6
 
 #Atributos de puntuacion
 NumZonas = 0
@@ -77,18 +78,18 @@ def modelo(n_actions=4):
     funct_atc = tf.nn.relu
 
     n_inputs = 78 + n_actions*N_INPUTS
-    # n_intermediate_inputs =  n_inputs/2
-    # n_intermediate_inputs_2 = n_intermediate_inputs/2 
-  
-    # model = models.Sequential()
-    # model.add(layers.Dense(n_intermediate_inputs, input_shape = (n_inputs,), bias_initializer=bias_init, activation = funct_atc)) # type: ignore
-    # model.add(layers.Dense(n_intermediate_inputs_2, bias_initializer=bias_init, activation = funct_atc)) # type: ignore
-    # model.add(layers.Dense(4, bias_initializer=bias_init, activation = tf.nn.tanh)) # type: ignore
+    n_intermediate_inputs =  n_inputs/2
+    n_intermediate_inputs_2 = n_intermediate_inputs/2 
   
     model = models.Sequential()
-    model.add(layers.Dense(16, input_shape = (n_inputs,), bias_initializer=bias_init, activation = funct_atc)) # type: ignore
-    model.add(layers.Dense(8, bias_initializer=bias_init, activation = funct_atc)) # type: ignore
+    model.add(layers.Dense(n_intermediate_inputs, input_shape = (n_inputs,), bias_initializer=bias_init, activation = funct_atc)) # type: ignore
+    model.add(layers.Dense(n_intermediate_inputs_2, bias_initializer=bias_init, activation = funct_atc)) # type: ignore
     model.add(layers.Dense(2, bias_initializer=bias_init, activation = tf.nn.tanh)) # type: ignore
+  
+    # model = models.Sequential()
+    # model.add(layers.Dense(16, input_shape = (n_inputs,), bias_initializer=bias_init, activation = funct_atc)) # type: ignore
+    # model.add(layers.Dense(8, bias_initializer=bias_init, activation = funct_atc)) # type: ignore
+    # model.add(layers.Dense(2, bias_initializer=bias_init, activation = tf.nn.tanh)) # type: ignore
 
     return model
 
@@ -160,7 +161,7 @@ def NuevaPoblacion():
     Chocados.clear()
     
     for i in range(TamPoblacion):
-        model = modelo()
+        model = modelo(N_ACTIONS)
         Modelos.append(Dron(model))
         Puntuaciones.append(0.0)
         Penalizaciones.append(0.0)
@@ -250,7 +251,7 @@ def cruceModelos(padre1, padre2):
                         pesos1[i][j][k] = pesos2[i][j][k]
                     pesos1[i+1][k] = pesos2[i+1][k]      
 
-    nuevoModelo = modelo()
+    nuevoModelo = modelo(N_ACTIONS)
     pesos1 = mutarPesos2(pesos1)
     nuevoModelo.set_weights(pesos1)
 
@@ -284,7 +285,7 @@ def CargarElite(nombre = 'Generacion1'):
     Elite.clear()
     for x in range(TamElite):
         path_model = directorio + nombre + ' Individuo' + str(x) + '.h5'
-        new_model = modelo()
+        new_model = modelo(N_ACTIONS)
         new_model.load_weights(path_model)
         Elite.append(Dron(new_model))
     print('Elite cargada!')
