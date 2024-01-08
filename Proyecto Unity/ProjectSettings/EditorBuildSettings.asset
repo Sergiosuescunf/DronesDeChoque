@@ -11,7 +11,7 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/Scenes/Circuito Pruebas.unity
     guid: 5a92638e675691e4cb98223159f3482e
-  - enabled: 0
+  - enabled: 1
     path: Assets/Scenes/Casa Entreno.unity
     guid: fad6aa1f3da22e449b5a80691662d0c1
   - enabled: 0
