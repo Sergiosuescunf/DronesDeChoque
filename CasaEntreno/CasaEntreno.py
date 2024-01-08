@@ -34,7 +34,7 @@ parser.add_argument("-g", "--generation", type=int, help="Number of generation t
 parser.add_argument("-mg", "--max_generations", type=int, help="Max number of generations", default=100)
 parser.add_argument("-ps", "--population_size", type=int, help="Number of individuals per generation", default=200)
 parser.add_argument("-es", "--elite_size", type=int, help="Number of elite individuals per generation", default=10)
-
+parser.add_argument("-t", "--train", type=bool, help="Train the population", default=False)
 # Analiza los argumentos
 args = parser.parse_args()
 
@@ -56,7 +56,8 @@ Zones = []
 PopulationSize = args.population_size
 EliteSize = args.elite_size
 Epoch = 0
-GameEpoch = args.generation  
+GameEpoch = args.generation
+print("GameEpoch:", GameEpoch)  
 MaxEpochs = args.max_generations 
 MaxSteps = 3000
 
@@ -273,15 +274,15 @@ def NewGeneration():
 
     for x in Elite:
         Models.append(x)
-
-    for x in range(PopulationSize - EliteSize):
-        p1 = random.randint(0,EliteSize-1)
-        p2 = random.randint(0,EliteSize-1)
-        while(p1 == p2):
+    if(args.train):
+        for x in range(PopulationSize - EliteSize):
+            p1 = random.randint(0,EliteSize-1)
             p2 = random.randint(0,EliteSize-1)
-    
-        newChild = CrossModels(Elite[p1], Elite[p2])
-        Models.append(Drone(newChild))
+            while(p1 == p2):
+                p2 = random.randint(0,EliteSize-1)
+        
+            newChild = CrossModels(Elite[p1], Elite[p2])
+            Models.append(Drone(newChild))
 
 # Saves the models of the last generated elite
 def SaveElite(name = 'Generation1'):
@@ -449,6 +450,129 @@ def TrainPopulation(env, behavior_name, spec):
                 auxBestScore = bestScore
         """
 
+
+def ShowPopulationElite(env, behavior_name, spec):
+
+    if(Epoch < 39):
+        auxMS = (MaxSteps - 200)//40
+        FinalStep = auxMS * (Epoch + 1) + 200
+    else:
+        FinalStep = MaxSteps
+        
+    steps = 0
+    NumCrashed = 0
+    best = 0
+    camera = 0
+    bestScore = 0
+    
+    env.reset()
+    decision_steps, terminal_steps = env.get_steps(behavior_name)
+    action = spec.action_spec.random_action(len(decision_steps))
+
+    # Initialize the action history for each agent
+    action_history = {id: [np.zeros(2, dtype=np.float32) for _ in range(N_ACTIONS)] for id in range(PopulationSize)}
+
+    pred = np.array([0, 0, 0, 0], dtype = np.float32)
+    
+    done = False 
+    while not done:
+        
+        decision_steps, terminal_steps = env.get_steps(behavior_name)
+        Movements = [[]]
+        
+        for id in decision_steps.agent_id:
+                
+            if(Crashed[id] == 1):
+                
+                Lasers = np.atleast_2d([])
+                
+                for i in range(7):
+                    laser = decision_steps[id][0][i]
+                    reading = np.atleast_2d([laser[21], laser[17], laser[13], laser[9], laser[5], laser[1], laser[3], laser[7], laser[11], laser[15], laser[19]])
+                    Lasers  = np.concatenate((Lasers, reading), axis=1)
+                
+                height = np.atleast_2d([decision_steps[id][0][7][1]])
+                if(normalize):
+                    Lasers = Normalize(Lasers)
+                Lasers = np.concatenate((Lasers, height), axis=1)
+
+                flattened_history = np.concatenate([action.flatten() for action in action_history[id]])
+                network_input = np.concatenate([Lasers.flatten(), flattened_history])
+                network_input = network_input.reshape(1, -1)
+                Tensor = tf.constant(network_input)
+                
+                pred = Models[id].prediction(Tensor)
+                pred_array = pred.numpy().flatten()
+
+                if len(action_history[id]) >= N_ACTIONS:
+                    action_history[id].pop(0)  # Remove the oldest action if we already have n actions
+                
+                action_history[id].append(pred_array)  # Add the new action
+
+                state = decision_steps[id][0][9]
+                posX = state[0]
+                posZ = state[2]
+                
+                CalculateScore(id, posX, posZ)
+
+                dist_center = decision_steps[id][0][8][1]
+                dist_left = decision_steps[id][0][8][3]
+                dist_right = decision_steps[id][0][8][5]
+
+                CalculateDistancePenalty(id, dist_center, dist_left, dist_right)
+                
+                if(Crashed[id] == 0):
+                    NumCrashed += 1
+                
+                if state[3] == 0:
+                    Crashed[id] = 0
+                    NumCrashed = NumCrashed + 1
+                    
+            else:
+                pred = np.array([[0, 0]], dtype = np.float32)
+            
+
+            if(Crashed[id] == 0):
+                pred = np.concatenate((pred, np.array([[0.1]])), axis=1)
+            elif(id == 0 and steps < 11):
+                pred = np.concatenate((pred, np.array([[0.2]])), axis=1)
+            elif(Crashed[camera] == 0 and id == best):
+                pred = np.concatenate((pred, np.array([[0.2]])), axis=1)
+                camera = id
+            elif(id < EliteSize):
+                pred = np.concatenate((pred, np.array([[0.3]])), axis=1)    
+            else:
+                pred = np.concatenate((pred, np.array([[0]])), axis=1)
+
+            if len(Movements[0]) == 0:
+                Movements = pred
+            else:
+                newMovement = pred
+                Movements = np.concatenate((Movements, newMovement), axis=0)
+        
+        # for i in range(len(Scores)):
+        #     Scores[i] = Models[i].grid_score() + Penalties[i] + len(Models[i].explored_zones) * NewZoneScore
+
+        action.add_continuous(Movements)
+        env.set_actions(behavior_name, action)
+        env.step()
+            
+        # if(steps % 25 == 0):
+        #     bestScore = 0
+        #     best = 0
+        #     for i in range(PopulationSize):
+        #         if(bestScore < Scores[i] and Crashed[i] == 1):
+        #             bestScore = Scores[i]
+        #             best = i
+        #     print("Step: " + str(steps) + " \t| Crashed: " + str(NumCrashed) + "\t|Best Drone: " + str(best) + "\t|Score of the Best : " + "%.2f" % bestScore + "\t| Zone of the Best: " + str(max(Models[best].explored_zones)))
+            
+        steps = steps + 1
+        
+        if(steps >= FinalStep):
+            done = True
+        if(NumCrashed >= PopulationSize):
+            done = True
+        
 def save_stats():
     max_score = max(Scores)
     max_index = Scores.index(max_score)
@@ -536,12 +660,12 @@ def Train():
 def ShowPopulation():
     
     global Epoch
-    
+
     Epoch = GameEpoch
-    
+
     NewPopulation()
     
-    aux = "Generation" + str(1)
+    aux = "Generation" + str(Epoch)
     LoadElite(aux)
     NewGeneration()
 
@@ -572,7 +696,7 @@ def ShowPopulation():
             NewGeneration()
 
         print("Showing epoch: " + str(Epoch + 1))
-        TrainPopulation(env, behavior_name, spec)
+        ShowPopulationElite(env, behavior_name, spec)
 
 def CreateDirectory():
 
@@ -584,14 +708,13 @@ def CreateDirectory():
 
 
 def Start():
-    
-    global GameEpoch
-    GameEpoch = 0
-
     CreateDirectory()
     LoadMap()
-    #ShowPopulation()
-    Train()
+    if(args.train):
+        Train()
+    else:
+        ShowPopulation()
+    # Train()
 
 if __name__ == '__main__':
     Start()
