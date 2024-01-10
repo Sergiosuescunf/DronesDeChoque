@@ -25,17 +25,16 @@ elif os_name == 'nt':
     FILE_NAME = 'CasaEntreno.exe'
     CLEAR_COMMAND = 'cls'
 
-parser = argparse.ArgumentParser(description="Especifica los parámetros de la arquitectura y del entrenamiento.")
+parser = argparse.ArgumentParser(description="Specify the architecture and train parameters.")
 
-# Define los argumentos que aceptará el programa
-parser.add_argument("-i", "--inputs", type=int, help="Number of inputs", default=2)
+parser.add_argument("-i", "--inputs", type=int, help="Number of inputs of the model", default=2)
 parser.add_argument("-a", "--actions", type=int, help="Number of previous actions", required=True)
 parser.add_argument("-g", "--generation", type=int, help="Number of generation to start", default=0)
-parser.add_argument("-mg", "--max_generations", type=int, help="Max number of generations", default=100)
+parser.add_argument("-mg", "--max_generations", type=int, help="Max number of generations", default=200)
 parser.add_argument("-ps", "--population_size", type=int, help="Number of individuals per generation", default=200)
 parser.add_argument("-es", "--elite_size", type=int, help="Number of elite individuals per generation", default=10)
 parser.add_argument("-t", "--train", type=bool, help="Train the population", default=False)
-# Analiza los argumentos
+
 args = parser.parse_args()
 
 # Normalize score by grid and penalty and add weights (coefficients)
@@ -46,10 +45,10 @@ N_ACTIONS = args.actions
 # Score attributes
 NumZones = 0
 ZoneScore = 50
-Penalty = 40
+Penalty = 150
 ProximityPenalty = 20
 NewZoneScore = 100
-MaxDistance = 0.3
+MaxDistance = 0.6
 Zones = [] 
 
 # Population Variables
@@ -93,8 +92,8 @@ def create_model():
     activation_func = tf.nn.relu
 
     n_inputs = 78 + N_ACTIONS*N_INPUTS
-    n_intermediate_inputs =  n_inputs/2
-    n_intermediate_inputs_2 = n_intermediate_inputs/2 
+    n_intermediate_inputs =  32
+    n_intermediate_inputs_2 = 16
   
     model = models.Sequential()
     model.add(layers.Dense(n_intermediate_inputs, input_shape = (n_inputs,), bias_initializer=bias_init, activation = activation_func))
@@ -322,11 +321,12 @@ def Normalize(Lasers):
 # Trains a population
 def TrainPopulation(env, behavior_name, spec):
 
-    if(Epoch < 39):
-        auxMS = (MaxSteps - 200)//40
-        FinalStep = auxMS * (Epoch + 1) + 200
-    else:
-        FinalStep = MaxSteps
+    # TODO: remove if not needed
+    # if(Epoch < 39):
+    #     auxMS = (MaxSteps - 200)//40
+    #     FinalStep = auxMS * (Epoch + 1) + 200
+    # else:
+    FinalStep = MaxSteps
         
     steps = 0
     NumCrashed = 0
@@ -390,12 +390,10 @@ def TrainPopulation(env, behavior_name, spec):
 
                 CalculateDistancePenalty(id, dist_center, dist_left, dist_right)
                 
-                if(Crashed[id] == 0):
-                    NumCrashed += 1
-                
                 if state[3] == 0:
                     Crashed[id] = 0
-                    NumCrashed = NumCrashed + 1
+                    Models[id].crashed = True
+                    NumCrashed += 1
                     
             else:
                 pred = np.array([[0, 0]], dtype = np.float32)
@@ -420,7 +418,7 @@ def TrainPopulation(env, behavior_name, spec):
                 Movements = np.concatenate((Movements, newMovement), axis=0)
         
         for i in range(len(Scores)):
-            Scores[i] = Models[i].grid_score() + Penalties[i] + len(Models[i].explored_zones) * NewZoneScore
+            Scores[i] = Models[i].grid_score() + Penalties[i] + len(Models[i].explored_zones)-1  * NewZoneScore - int(Models[i].crashed) * Penalty
 
         action.add_continuous(Movements)
         env.set_actions(behavior_name, action)
@@ -513,25 +511,22 @@ def ShowPopulationElite(env, behavior_name, spec):
                 posX = state[0]
                 posZ = state[2]
                 
-                CalculateScore(id, posX, posZ)
+                # CalculateScore(id, posX, posZ)
 
                 dist_center = decision_steps[id][0][8][1]
                 dist_left = decision_steps[id][0][8][3]
                 dist_right = decision_steps[id][0][8][5]
 
                 CalculateDistancePenalty(id, dist_center, dist_left, dist_right)
-                
-                if(Crashed[id] == 0):
-                    NumCrashed += 1
-                
+                                
                 if state[3] == 0:
                     Crashed[id] = 0
-                    NumCrashed = NumCrashed + 1
+                    Models[id].crashed = True
+                    NumCrashed += 1
                     
             else:
                 pred = np.array([[0, 0]], dtype = np.float32)
             
-
             if(Crashed[id] == 0):
                 pred = np.concatenate((pred, np.array([[0.1]])), axis=1)
             elif(id == 0 and steps < 11):

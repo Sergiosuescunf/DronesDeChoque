@@ -9,6 +9,7 @@ class Drone:
         self.model = modelo
         self.grid = Grid(-14, -16, 16, 14, GRID_SIZE)
         self.explored_zones = []
+        self.crashed = False
 
     def save_model(self, filename):
         self.model.save_weights(filename)
