@@ -1,0 +1,9 @@
+Generation: 1 | Drone: 138 | Score: 120.0 | Explored Cells: 20 of 900 total cells
+Generation: 2 | Drone: 24 | Score: 118.0 | Explored Cells: 18 of 900 total cells
+Generation: 3 | Drone: 101 | Score: 117.0 | Explored Cells: 17 of 900 total cells
+Generation: 4 | Drone: 54 | Score: 123.0 | Explored Cells: 23 of 900 total cells
+Generation: 5 | Drone: 0 | Score: 123.0 | Explored Cells: 23 of 900 total cells
+Generation: 6 | Drone: 168 | Score: 122.17524710568514 | Explored Cells: 31 of 900 total cells
+Generation: 7 | Drone: 73 | Score: 136.0 | Explored Cells: 36 of 900 total cells
+Generation: 8 | Drone: 172 | Score: 145.0 | Explored Cells: 45 of 900 total cells
+Generation: 9 | Drone: 0 | Score: 148.0 | Explored Cells: 48 of 900 total cells

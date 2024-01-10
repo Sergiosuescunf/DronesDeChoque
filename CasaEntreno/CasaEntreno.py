@@ -84,7 +84,7 @@ PreviousScore = 0
 Crashed = []
 
 # Save directory
-directory = f"Elite_simple_{N_OBS}_obs_dinamic_arquitecture/Experiment1/"
+directory = f"Elite_simple_{N_OBS}_obs_dinamic_arquitecture/Experiment2/"
 
 # Model
 def create_model():
@@ -93,8 +93,8 @@ def create_model():
     activation_func = tf.nn.relu
 
     n_inputs = 78 * (N_OBS+1)
-    n_intermediate_inputs =  n_inputs/2
-    n_intermediate_inputs_2 = n_intermediate_inputs/2 
+    n_intermediate_inputs =  32
+    n_intermediate_inputs_2 = 16
   
     model = models.Sequential()
     model.add(layers.Dense(n_intermediate_inputs, input_shape = (n_inputs,), bias_initializer=bias_init, activation = activation_func))
