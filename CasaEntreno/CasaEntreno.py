@@ -48,7 +48,7 @@ ZoneScore = 50
 Penalty = 150
 ProximityPenalty = 20
 NewZoneScore = 100
-MaxDistance = 0.6
+MaxDistance = 0.55
 Zones = [] 
 
 # Population Variables
@@ -418,7 +418,7 @@ def TrainPopulation(env, behavior_name, spec):
                 Movements = np.concatenate((Movements, newMovement), axis=0)
         
         for i in range(len(Scores)):
-            Scores[i] = Models[i].grid_score() + Penalties[i] + len(Models[i].explored_zones)-1  * NewZoneScore - int(Models[i].crashed) * Penalty
+            Scores[i] = Models[i].grid_score() + Penalties[i] + (len(Models[i].explored_zones)-1)  * NewZoneScore - int(Models[i].crashed) * Penalty
 
         action.add_continuous(Movements)
         env.set_actions(behavior_name, action)
