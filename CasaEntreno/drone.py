@@ -1,6 +1,4 @@
-import neat
 from grid import Grid
-from neat.activations import tanh_activation
 
 GRID_SIZE = 1
 

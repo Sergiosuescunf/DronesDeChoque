@@ -29,7 +29,7 @@ parser = argparse.ArgumentParser(description="Especifica los parámetros de la a
 
 # Define los argumentos que aceptará el programa
 parser.add_argument("-i", "--inputs", type=int, help="Number of inputs", default=2)
-parser.add_argument("-a", "--actions", type=int, help="Number of previous actions", required=True)
+parser.add_argument("-o", "--obs", type=int, help="Number of previous obs", required=True)
 parser.add_argument("-g", "--generation", type=int, help="Number of generation to start", default=0)
 parser.add_argument("-mg", "--max_generations", type=int, help="Max number of generations", default=100)
 parser.add_argument("-ps", "--population_size", type=int, help="Number of individuals per generation", default=200)
@@ -41,7 +41,7 @@ args = parser.parse_args()
 # Normalize score by grid and penalty and add weights (coefficients)
 
 N_INPUTS = args.inputs 
-N_ACTIONS = args.actions 
+N_OBS = args.obs 
 
 # Score attributes
 NumZones = 0
@@ -84,7 +84,7 @@ PreviousScore = 0
 Crashed = []
 
 # Save directory
-directory = f"Elite_simple_{N_ACTIONS}_actions_dinamic_arquitecture/Experiment1/"
+directory = f"Elite_simple_{N_OBS}_obs_dinamic_arquitecture/Experiment1/"
 
 # Model
 def create_model():
@@ -92,7 +92,7 @@ def create_model():
     bias_init = tf.keras.initializers.he_uniform()
     activation_func = tf.nn.relu
 
-    n_inputs = 78 + N_ACTIONS*N_INPUTS
+    n_inputs = 78 * (N_OBS+1)
     n_intermediate_inputs =  n_inputs/2
     n_intermediate_inputs_2 = n_intermediate_inputs/2 
   
@@ -339,7 +339,7 @@ def TrainPopulation(env, behavior_name, spec):
     action = spec.action_spec.random_action(len(decision_steps))
 
     # Initialize the action history for each agent
-    action_history = {id: [np.zeros(2, dtype=np.float32) for _ in range(N_ACTIONS)] for id in range(PopulationSize)}
+    obs_history = {id: [np.zeros(78, dtype=np.float32) for _ in range(N_OBS)] for id in range(PopulationSize)}
 
     pred = np.array([0, 0, 0, 0], dtype = np.float32)
     
@@ -365,18 +365,17 @@ def TrainPopulation(env, behavior_name, spec):
                     Lasers = Normalize(Lasers)
                 Lasers = np.concatenate((Lasers, height), axis=1)
 
-                flattened_history = np.concatenate([action.flatten() for action in action_history[id]])
+                flattened_history = np.concatenate([action.flatten() for action in obs_history[id]])
                 network_input = np.concatenate([Lasers.flatten(), flattened_history])
                 network_input = network_input.reshape(1, -1)
                 Tensor = tf.constant(network_input)
                 
                 pred = Models[id].prediction(Tensor)
-                pred_array = pred.numpy().flatten()
 
-                if len(action_history[id]) >= N_ACTIONS:
-                    action_history[id].pop(0)  # Remove the oldest action if we already have n actions
+                if len(obs_history[id]) >= N_OBS:
+                    obs_history[id].pop(0)  # Remove the oldest action if we already have n actions
                 
-                action_history[id].append(pred_array)  # Add the new action
+                obs_history[id].append(Lasers)  # Add the new action
 
                 state = decision_steps[id][0][9]
                 posX = state[0]
@@ -470,7 +469,7 @@ def ShowPopulationElite(env, behavior_name, spec):
     action = spec.action_spec.random_action(len(decision_steps))
 
     # Initialize the action history for each agent
-    action_history = {id: [np.zeros(2, dtype=np.float32) for _ in range(N_ACTIONS)] for id in range(PopulationSize)}
+    action_history = {id: [np.zeros(78, dtype=np.float32) for _ in range(N_OBS)] for id in range(PopulationSize)}
 
     pred = np.array([0, 0, 0, 0], dtype = np.float32)
     
@@ -502,12 +501,11 @@ def ShowPopulationElite(env, behavior_name, spec):
                 Tensor = tf.constant(network_input)
                 
                 pred = Models[id].prediction(Tensor)
-                pred_array = pred.numpy().flatten()
 
-                if len(action_history[id]) >= N_ACTIONS:
+                if len(action_history[id]) >= N_OBS:
                     action_history[id].pop(0)  # Remove the oldest action if we already have n actions
                 
-                action_history[id].append(pred_array)  # Add the new action
+                action_history[id].append(Lasers)  # Add the new action
 
                 state = decision_steps[id][0][9]
                 posX = state[0]
