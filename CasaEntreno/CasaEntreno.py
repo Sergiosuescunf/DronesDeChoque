@@ -29,24 +29,49 @@ parser = argparse.ArgumentParser(description="Specify the architecture and train
 
 # Define los argumentos que aceptará el programa
 parser.add_argument("-i", "--inputs", type=int, help="Number of inputs", default=2)
-parser.add_argument("-o", "--obs", type=int, help="Number of previous obs", required=True)
+parser.add_argument("-a", "--actions", type=int, help="Number of previous actions", default=0)
+parser.add_argument("-o", "--obs", type=int, help="Number of previous observations", default=0)
 parser.add_argument("-g", "--generation", type=int, help="Number of generation to start", default=0)
 parser.add_argument("-mg", "--max_generations", type=int, help="Max number of generations", default=200)
 parser.add_argument("-ps", "--population_size", type=int, help="Number of individuals per generation", default=200)
 parser.add_argument("-es", "--elite_size", type=int, help="Number of elite individuals per generation", default=10)
 parser.add_argument("-t", "--train", type=bool, help="Train the population", default=False)
+parser.add_argument("-ng", "--nographics", type=bool, help="Don't show graphics", default=False)
 
 args = parser.parse_args()
 
 # Normalize score by grid and penalty and add weights (coefficients)
 
 N_INPUTS = args.inputs 
+N_ACTIONS = args.actions
 N_OBS = args.obs 
+NO_GRAPH = args.nographics
+
+USES_ACT = N_ACTIONS > 0
+USES_OBS = N_OBS > 0
+
+assert N_INPUTS == 2, "N_INPUTS must be 2"  
+
+print("")
+print("N_INPUTS:", N_INPUTS)
+print("N_ACTIONS:", N_ACTIONS)
+print("N_OBS:", N_OBS)
+print("USES_ACT:", USES_ACT)
+print("USES_OBS:", USES_OBS)
+print("")
+print("Generation:", args.generation)
+print("Max Generations:", args.max_generations)
+print("Population Size:", args.population_size)
+print("Elite Size:", args.elite_size)
+print("")
+print("Train:", args.train)
+print("no_graph:", NO_GRAPH)
+
 
 # Score attributes
 NumZones = 0
 ZoneScore = 50
-Penalty = 150
+Penalty = 40
 ProximityPenalty = 20
 NewZoneScore = 100
 MaxDistance = 0.55
@@ -59,7 +84,7 @@ Epoch = 0
 GameEpoch = args.generation
 print("GameEpoch:", GameEpoch)  
 MaxEpochs = args.max_generations 
-MaxSteps = 3000
+MaxSteps = 2000
 
 # Normalize Lasers
 normalize = True
@@ -84,7 +109,7 @@ PreviousScore = 0
 Crashed = []
 
 # Save directory
-directory = f"Elite_simple_{N_OBS}_obs_dinamic_arquitecture/Experiment2/"
+directory = f"Elite_simple_{N_OBS}_obs_{N_ACTIONS}_act_dinamic_arquitecture/Experiment2/"
 
 # Model
 def create_model():
@@ -92,14 +117,14 @@ def create_model():
     bias_init = tf.keras.initializers.he_uniform()
     activation_func = tf.nn.relu
 
-    n_inputs = 78 * (N_OBS+1)
+    n_inputs = 78 * (N_OBS+1) + N_ACTIONS * N_INPUTS
     n_intermediate_inputs =  32
     n_intermediate_inputs_2 = 16
   
     model = models.Sequential()
     model.add(layers.Dense(n_intermediate_inputs, input_shape = (n_inputs,), bias_initializer=bias_init, activation = activation_func))
     model.add(layers.Dense(n_intermediate_inputs_2, bias_initializer=bias_init, activation = activation_func))
-    model.add(layers.Dense(2, bias_initializer=bias_init, activation = tf.nn.tanh))
+    model.add(layers.Dense(N_INPUTS, bias_initializer=bias_init, activation = tf.nn.tanh))
 
     return model
 
@@ -339,8 +364,16 @@ def TrainPopulation(env, behavior_name, spec):
     decision_steps, terminal_steps = env.get_steps(behavior_name)
     action = spec.action_spec.random_action(len(decision_steps))
 
-    # Initialize the action history for each agent
-    obs_history = {id: [np.zeros(78, dtype=np.float32) for _ in range(N_OBS)] for id in range(PopulationSize)}
+    obs_history = {}
+    act_history = {}
+
+    # Initialize the observation history for each agent
+    if USES_OBS:
+        obs_history = {id: [np.zeros(78, dtype=np.float32) for _ in range(N_OBS)] for id in range(PopulationSize)}
+
+    # Initialize the observation history for each agent
+    if USES_ACT:
+        act_history = {id: [np.zeros(N_INPUTS, dtype=np.float32) for _ in range(N_ACTIONS)] for id in range(PopulationSize)}
 
     pred = np.array([0, 0, 0, 0], dtype = np.float32)
     
@@ -364,19 +397,36 @@ def TrainPopulation(env, behavior_name, spec):
                 height = np.atleast_2d([decision_steps[id][0][7][1]])
                 if(normalize):
                     Lasers = Normalize(Lasers)
+
                 Lasers = np.concatenate((Lasers, height), axis=1)
 
-                flattened_history = np.concatenate([action.flatten() for action in obs_history[id]])
-                network_input = np.concatenate([Lasers.flatten(), flattened_history])
+                network_input = Lasers.flatten()
+                
+                if USES_OBS:
+                    flattened_obs_history = np.concatenate([action.flatten() for action in obs_history[id]])
+                    network_input = np.concatenate([network_input, flattened_obs_history])
+
+                if USES_ACT:
+                    flattened_act_history = np.concatenate([action.flatten() for action in act_history[id]])
+                    network_input = np.concatenate([network_input, flattened_act_history])
+
                 network_input = network_input.reshape(1, -1)
                 Tensor = tf.constant(network_input)
                 
                 pred = Models[id].prediction(Tensor)
+                pred_array = pred.numpy().flatten()
 
-                if len(obs_history[id]) >= N_OBS:
-                    obs_history[id].pop(0)  # Remove the oldest action if we already have n actions
-                
-                obs_history[id].append(Lasers)  # Add the new action
+                if USES_OBS:
+                    obs_history[id].append(Lasers)  # Add the new action
+
+                    if len(obs_history[id]) >= N_OBS:
+                        obs_history[id].pop(0)  # Remove the oldest action if we already have n actions
+
+                if USES_ACT:
+                    act_history[id].append(pred_array)  # Add the new action
+
+                    if len(act_history[id]) >= N_ACTIONS:
+                        act_history[id].pop(0)  # Remove the oldest action if we already have n actions
 
                 state = decision_steps[id][0][9]
                 posX = state[0]
@@ -615,7 +665,7 @@ def Train():
     channel = EngineConfigurationChannel()
     channel.set_configuration_parameters(height=1024, width=1024)
         
-    env = UnityEnvironment(file_name=FILE_NAME, seed=1, no_graphics=True, side_channels=[channel])
+    env = UnityEnvironment(file_name=FILE_NAME, seed=1, no_graphics=NO_GRAPH, side_channels=[channel])
     env.reset()
     time.sleep(5)
 
