@@ -81,6 +81,12 @@ Penalties = []
 CurrentScore = 0
 PreviousScore = 0
 Crashed = []
+Grid_coordinates = []
+
+if args.train:
+    Grid_coordinates = [-14, -16, 16, 14]
+else:
+    Grid_coordinates = [-12, -27, 36, 15]
 
 # Save directory
 directory = f"Elite_simple_{N_ACTIONS}_actions_dinamic_arquitecture/Experiment1/"
@@ -185,7 +191,7 @@ def NewPopulation():
     
     for i in range(PopulationSize):
         model = create_model()
-        Models.append(Drone(model))
+        Models.append(Drone(model, Grid_coordinates))
         Scores.append(0.0)
         Penalties.append(0.0)
         Crashed.append(1)
@@ -295,7 +301,7 @@ def NewGeneration():
                 p2 = random.randint(0,EliteSize-1)
         
             newChild = CrossModels(Elite[p1], Elite[p2])
-            Models.append(Drone(newChild))
+            Models.append(Drone(newChild, Grid_coordinates))
 
 # Saves the models of the last generated elite
 def SaveElite(name = 'Generation1'):
@@ -310,7 +316,7 @@ def LoadElite(name = 'Generation1'):
         path_model = directory + name + ' Individual' + str(x) + '.h5'
         new_model = create_model()
         new_model.load_weights(path_model)
-        Elite.append(Drone(new_model))
+        Elite.append(Drone(new_model, Grid_coordinates))
     print('Elite loaded!')
 
 # Normalizes the values of the lasers between 0 and 1
@@ -385,6 +391,7 @@ def TrainPopulation(env, behavior_name, spec):
                 Tensor = tf.constant(network_input)
                 
                 pred = Models[id].prediction(Tensor)
+
                 pred_array = pred.numpy().flatten()
 
                 if len(action_history[id]) >= N_ACTIONS:
@@ -683,7 +690,7 @@ def ShowPopulation():
     channel = EngineConfigurationChannel()
     channel.set_configuration_parameters(height=1024, width=1024)
         
-    env = UnityEnvironment(file_name=FILE_NAME, seed=1, side_channels=[channel])
+    env = UnityEnvironment(file_name="CasaEntrenoTest.x86_64", seed=1, side_channels=[channel])
     env.reset()
     
     time.sleep(5)
