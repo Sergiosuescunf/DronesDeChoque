@@ -84,9 +84,9 @@ Crashed = []
 Grid_coordinates = []
 
 if args.train:
-    Grid_coordinates = [-14, -16, 16, 14]
+    Grid_coordinates = [-14.0, -16.0, 16.0, 14.0]
 else:
-    Grid_coordinates = [-12, -27, 36, 15]
+    Grid_coordinates = [-12.0, -27.0, 36.0, 15.0]
 
 # Save directory
 directory = f"Elite_simple_{N_ACTIONS}_actions_dinamic_arquitecture/Experiment1/"
@@ -452,7 +452,7 @@ def TrainPopulation(env, behavior_name, spec):
                 if(bestScore < Scores[i] and Crashed[i] == 1):
                     bestScore = Scores[i]
                     best = i
-            print("Step: " + str(steps) + " \t| Crashed: " + str(NumCrashed) + "\t|Best Drone: " + str(best) + "\t|Score of the Best : " + "%.2f" % bestScore + "\t| Zone of the Best: " + str(max(Models[best].explored_zones)))
+            print("Step: " + str(steps) + " \t| Crashed: " + str(NumCrashed) + "\t|Best Drone: " + str(best) + "\t|Score of the Best : " + "%.2f" % bestScore + "\t| Zone of the Best: " + str(max(Models[best].explored_zones))) + "\t| Cells explored: " + str(Models[best].grid_score())
             
         steps = steps + 1
         
