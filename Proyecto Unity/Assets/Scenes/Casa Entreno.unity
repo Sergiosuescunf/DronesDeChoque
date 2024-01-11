@@ -178,6 +178,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Dron simple (198)
       objectReference: {fileID: 0}
+    - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5446958887522166012, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: camara
       value: 
@@ -238,6 +242,10 @@ PrefabInstance:
     - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: m_Name
       value: Dron simple (187)
+      objectReference: {fileID: 0}
+    - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5446958887522166012, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: camara
@@ -300,6 +308,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Dron simple (125)
       objectReference: {fileID: 0}
+    - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5446958887522166012, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: camara
       value: 
@@ -360,6 +372,10 @@ PrefabInstance:
     - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: m_Name
       value: Dron simple (118)
+      objectReference: {fileID: 0}
+    - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5446958887522166012, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: camara
@@ -422,6 +438,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Dron simple (135)
       objectReference: {fileID: 0}
+    - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5446958887522166012, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: camara
       value: 
@@ -482,6 +502,10 @@ PrefabInstance:
     - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: m_Name
       value: Dron simple (107)
+      objectReference: {fileID: 0}
+    - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5446958887522166012, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: camara
@@ -544,6 +568,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Dron simple (105)
       objectReference: {fileID: 0}
+    - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5446958887522166012, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: camara
       value: 
@@ -604,6 +632,10 @@ PrefabInstance:
     - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: m_Name
       value: Dron simple (109)
+      objectReference: {fileID: 0}
+    - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5446958887522166012, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: camara
@@ -666,6 +698,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Dron simple (177)
       objectReference: {fileID: 0}
+    - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5446958887522166012, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: camara
       value: 
@@ -726,6 +762,10 @@ PrefabInstance:
     - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: m_Name
       value: Dron simple (141)
+      objectReference: {fileID: 0}
+    - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5446958887522166012, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: camara
@@ -788,6 +828,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Dron simple (149)
       objectReference: {fileID: 0}
+    - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5446958887522166012, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: camara
       value: 
@@ -801,13 +845,257 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 49795747455554880, guid: d2005cade186d4b4a94a7bda404b7e22, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 214065109394056761, guid: d2005cade186d4b4a94a7bda404b7e22, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 217038246100940500, guid: d2005cade186d4b4a94a7bda404b7e22, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 285114914779854546, guid: d2005cade186d4b4a94a7bda404b7e22, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 700556694477373553, guid: d2005cade186d4b4a94a7bda404b7e22, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 837370665005307707, guid: d2005cade186d4b4a94a7bda404b7e22, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 847588106567553633, guid: d2005cade186d4b4a94a7bda404b7e22, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 847781841505047867, guid: d2005cade186d4b4a94a7bda404b7e22, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 927815663559785534, guid: d2005cade186d4b4a94a7bda404b7e22, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 985067864975174956, guid: d2005cade186d4b4a94a7bda404b7e22, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1101534080008664740, guid: d2005cade186d4b4a94a7bda404b7e22, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1307830697037276882, guid: d2005cade186d4b4a94a7bda404b7e22, type: 3}
       propertyPath: m_Name
       value: CasaEntreno
       objectReference: {fileID: 0}
+    - target: {fileID: 1550412401302352061, guid: d2005cade186d4b4a94a7bda404b7e22, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1724976023154854448, guid: d2005cade186d4b4a94a7bda404b7e22, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1754770566591673638, guid: d2005cade186d4b4a94a7bda404b7e22, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1795906235040882698, guid: d2005cade186d4b4a94a7bda404b7e22, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1825790859310618794, guid: d2005cade186d4b4a94a7bda404b7e22, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2069563462359817579, guid: d2005cade186d4b4a94a7bda404b7e22, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2097333209667638912, guid: d2005cade186d4b4a94a7bda404b7e22, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2186705896401926263, guid: d2005cade186d4b4a94a7bda404b7e22, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2252855347650186687, guid: d2005cade186d4b4a94a7bda404b7e22, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2448438540150978526, guid: d2005cade186d4b4a94a7bda404b7e22, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2708725337604642604, guid: d2005cade186d4b4a94a7bda404b7e22, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2864259988003320022, guid: d2005cade186d4b4a94a7bda404b7e22, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2908823975066495137, guid: d2005cade186d4b4a94a7bda404b7e22, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2952773338362912197, guid: d2005cade186d4b4a94a7bda404b7e22, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2968746251183540940, guid: d2005cade186d4b4a94a7bda404b7e22, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3010575704848781118, guid: d2005cade186d4b4a94a7bda404b7e22, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3094082789207200118, guid: d2005cade186d4b4a94a7bda404b7e22, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3098793935572525409, guid: d2005cade186d4b4a94a7bda404b7e22, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3182697717900027478, guid: d2005cade186d4b4a94a7bda404b7e22, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3497838501496760888, guid: d2005cade186d4b4a94a7bda404b7e22, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3557132626503275859, guid: d2005cade186d4b4a94a7bda404b7e22, type: 3}
       propertyPath: m_IsActive
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3686255782594121018, guid: d2005cade186d4b4a94a7bda404b7e22, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3760300210817833524, guid: d2005cade186d4b4a94a7bda404b7e22, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3868983478714882552, guid: d2005cade186d4b4a94a7bda404b7e22, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3894226144736280988, guid: d2005cade186d4b4a94a7bda404b7e22, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3909629330391508063, guid: d2005cade186d4b4a94a7bda404b7e22, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4028781086365004978, guid: d2005cade186d4b4a94a7bda404b7e22, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4029376761863114856, guid: d2005cade186d4b4a94a7bda404b7e22, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4111633551397351390, guid: d2005cade186d4b4a94a7bda404b7e22, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4150291205320326138, guid: d2005cade186d4b4a94a7bda404b7e22, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4160747709099971333, guid: d2005cade186d4b4a94a7bda404b7e22, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4313379423860194268, guid: d2005cade186d4b4a94a7bda404b7e22, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4358817627819345879, guid: d2005cade186d4b4a94a7bda404b7e22, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4401860100527057553, guid: d2005cade186d4b4a94a7bda404b7e22, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4923500991243695813, guid: d2005cade186d4b4a94a7bda404b7e22, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5248521713233750427, guid: d2005cade186d4b4a94a7bda404b7e22, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5334814825392910685, guid: d2005cade186d4b4a94a7bda404b7e22, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5604766303675696265, guid: d2005cade186d4b4a94a7bda404b7e22, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5695304040946341404, guid: d2005cade186d4b4a94a7bda404b7e22, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5757632661660133276, guid: d2005cade186d4b4a94a7bda404b7e22, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5778237184278114621, guid: d2005cade186d4b4a94a7bda404b7e22, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5813325814343692529, guid: d2005cade186d4b4a94a7bda404b7e22, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5978654187334969324, guid: d2005cade186d4b4a94a7bda404b7e22, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6262850668458588347, guid: d2005cade186d4b4a94a7bda404b7e22, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6318724055244979871, guid: d2005cade186d4b4a94a7bda404b7e22, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6372366257093583839, guid: d2005cade186d4b4a94a7bda404b7e22, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6397374902106244241, guid: d2005cade186d4b4a94a7bda404b7e22, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6418994382714505817, guid: d2005cade186d4b4a94a7bda404b7e22, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6488121226384033094, guid: d2005cade186d4b4a94a7bda404b7e22, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6560152726170049969, guid: d2005cade186d4b4a94a7bda404b7e22, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6712154767191829993, guid: d2005cade186d4b4a94a7bda404b7e22, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6731599752154636876, guid: d2005cade186d4b4a94a7bda404b7e22, type: 3}
       propertyPath: m_RootOrder
@@ -852,6 +1140,122 @@ PrefabInstance:
     - target: {fileID: 6731599752154636876, guid: d2005cade186d4b4a94a7bda404b7e22, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6772653971095949974, guid: d2005cade186d4b4a94a7bda404b7e22, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7093176134637831784, guid: d2005cade186d4b4a94a7bda404b7e22, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7104304727202450148, guid: d2005cade186d4b4a94a7bda404b7e22, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7117879324310841444, guid: d2005cade186d4b4a94a7bda404b7e22, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7140473022265130117, guid: d2005cade186d4b4a94a7bda404b7e22, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7247332473551528432, guid: d2005cade186d4b4a94a7bda404b7e22, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7251388751980609615, guid: d2005cade186d4b4a94a7bda404b7e22, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7278775748376277700, guid: d2005cade186d4b4a94a7bda404b7e22, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7349897136809919666, guid: d2005cade186d4b4a94a7bda404b7e22, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7368167659244258499, guid: d2005cade186d4b4a94a7bda404b7e22, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7541183461384057210, guid: d2005cade186d4b4a94a7bda404b7e22, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7620581956435223268, guid: d2005cade186d4b4a94a7bda404b7e22, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7772958055781520320, guid: d2005cade186d4b4a94a7bda404b7e22, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7863944269253567305, guid: d2005cade186d4b4a94a7bda404b7e22, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7893280093202530197, guid: d2005cade186d4b4a94a7bda404b7e22, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7935832598660702875, guid: d2005cade186d4b4a94a7bda404b7e22, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7970797408769896241, guid: d2005cade186d4b4a94a7bda404b7e22, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8039470449130640164, guid: d2005cade186d4b4a94a7bda404b7e22, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8175064570382119182, guid: d2005cade186d4b4a94a7bda404b7e22, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8186242511825419138, guid: d2005cade186d4b4a94a7bda404b7e22, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8460313746846950418, guid: d2005cade186d4b4a94a7bda404b7e22, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8666682934023881708, guid: d2005cade186d4b4a94a7bda404b7e22, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8679113051860940934, guid: d2005cade186d4b4a94a7bda404b7e22, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8773800221060473497, guid: d2005cade186d4b4a94a7bda404b7e22, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8805117206095510638, guid: d2005cade186d4b4a94a7bda404b7e22, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8871856743116878944, guid: d2005cade186d4b4a94a7bda404b7e22, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8898146909967219473, guid: d2005cade186d4b4a94a7bda404b7e22, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8939030353396818287, guid: d2005cade186d4b4a94a7bda404b7e22, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 9052128165623912052, guid: d2005cade186d4b4a94a7bda404b7e22, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d2005cade186d4b4a94a7bda404b7e22, type: 3}
@@ -924,6 +1328,10 @@ PrefabInstance:
     - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: m_Name
       value: Dron simple (188)
+      objectReference: {fileID: 0}
+    - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5446958887522166012, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: camara
@@ -1032,6 +1440,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Dron simple (131)
       objectReference: {fileID: 0}
+    - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5446958887522166012, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: camara
       value: 
@@ -1092,6 +1504,10 @@ PrefabInstance:
     - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: m_Name
       value: Dron simple (178)
+      objectReference: {fileID: 0}
+    - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5446958887522166012, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: camara
@@ -1154,6 +1570,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Dron simple (110)
       objectReference: {fileID: 0}
+    - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5446958887522166012, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: camara
       value: 
@@ -1214,6 +1634,10 @@ PrefabInstance:
     - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: m_Name
       value: Dron simple (128)
+      objectReference: {fileID: 0}
+    - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5446958887522166012, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: camara
@@ -1276,6 +1700,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Dron simple (116)
       objectReference: {fileID: 0}
+    - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5446958887522166012, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: camara
       value: 
@@ -1336,6 +1764,10 @@ PrefabInstance:
     - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: m_Name
       value: Dron simple (134)
+      objectReference: {fileID: 0}
+    - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5446958887522166012, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: camara
@@ -1398,6 +1830,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Dron simple (158)
       objectReference: {fileID: 0}
+    - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5446958887522166012, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: camara
       value: 
@@ -1458,6 +1894,10 @@ PrefabInstance:
     - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: m_Name
       value: Dron simple (197)
+      objectReference: {fileID: 0}
+    - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5446958887522166012, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: camara
@@ -1520,6 +1960,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Dron simple (157)
       objectReference: {fileID: 0}
+    - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5446958887522166012, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: camara
       value: 
@@ -1580,6 +2024,10 @@ PrefabInstance:
     - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: m_Name
       value: Dron simple (190)
+      objectReference: {fileID: 0}
+    - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5446958887522166012, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: camara
@@ -1642,6 +2090,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Dron simple (139)
       objectReference: {fileID: 0}
+    - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5446958887522166012, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: camara
       value: 
@@ -1702,6 +2154,10 @@ PrefabInstance:
     - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: m_Name
       value: Dron simple (166)
+      objectReference: {fileID: 0}
+    - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5446958887522166012, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: camara
@@ -1764,6 +2220,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Dron simple (172)
       objectReference: {fileID: 0}
+    - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5446958887522166012, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: camara
       value: 
@@ -1824,6 +2284,10 @@ PrefabInstance:
     - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: m_Name
       value: Dron simple (101)
+      objectReference: {fileID: 0}
+    - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5446958887522166012, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: camara
@@ -1886,6 +2350,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Dron simple (108)
       objectReference: {fileID: 0}
+    - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5446958887522166012, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: camara
       value: 
@@ -1946,6 +2414,10 @@ PrefabInstance:
     - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: m_Name
       value: Dron simple (120)
+      objectReference: {fileID: 0}
+    - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5446958887522166012, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: camara
@@ -2008,6 +2480,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Dron simple (175)
       objectReference: {fileID: 0}
+    - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5446958887522166012, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: camara
       value: 
@@ -2068,6 +2544,10 @@ PrefabInstance:
     - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: m_Name
       value: Dron simple (114)
+      objectReference: {fileID: 0}
+    - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5446958887522166012, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: camara
@@ -2130,6 +2610,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Dron simple (138)
       objectReference: {fileID: 0}
+    - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5446958887522166012, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: camara
       value: 
@@ -2190,6 +2674,10 @@ PrefabInstance:
     - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: m_Name
       value: Dron simple (165)
+      objectReference: {fileID: 0}
+    - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5446958887522166012, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: camara
@@ -2252,6 +2740,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Dron simple (148)
       objectReference: {fileID: 0}
+    - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5446958887522166012, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: camara
       value: 
@@ -2312,6 +2804,10 @@ PrefabInstance:
     - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: m_Name
       value: Dron simple (117)
+      objectReference: {fileID: 0}
+    - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5446958887522166012, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: camara
@@ -2374,6 +2870,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Dron simple (169)
       objectReference: {fileID: 0}
+    - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5446958887522166012, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: camara
       value: 
@@ -2434,6 +2934,10 @@ PrefabInstance:
     - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: m_Name
       value: Dron simple (164)
+      objectReference: {fileID: 0}
+    - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5446958887522166012, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: camara
@@ -2496,6 +3000,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Dron simple (167)
       objectReference: {fileID: 0}
+    - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5446958887522166012, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: camara
       value: 
@@ -2557,6 +3065,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Dron simple (193)
       objectReference: {fileID: 0}
+    - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5446958887522166012, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: camara
       value: 
@@ -2617,6 +3129,10 @@ PrefabInstance:
     - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: m_Name
       value: Dron simple (103)
+      objectReference: {fileID: 0}
+    - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5446958887522166012, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: camara
@@ -2763,6 +3279,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Dron simple (153)
       objectReference: {fileID: 0}
+    - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5446958887522166012, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: camara
       value: 
@@ -2823,6 +3343,10 @@ PrefabInstance:
     - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: m_Name
       value: Dron simple (196)
+      objectReference: {fileID: 0}
+    - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5446958887522166012, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: camara
@@ -2885,6 +3409,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Dron simple (113)
       objectReference: {fileID: 0}
+    - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5446958887522166012, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: camara
       value: 
@@ -2945,6 +3473,10 @@ PrefabInstance:
     - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: m_Name
       value: Dron simple (132)
+      objectReference: {fileID: 0}
+    - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5446958887522166012, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: camara
@@ -3007,6 +3539,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Dron simple (104)
       objectReference: {fileID: 0}
+    - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5446958887522166012, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: camara
       value: 
@@ -3067,6 +3603,10 @@ PrefabInstance:
     - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: m_Name
       value: Dron simple (161)
+      objectReference: {fileID: 0}
+    - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5446958887522166012, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: camara
@@ -3129,6 +3669,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Dron simple (194)
       objectReference: {fileID: 0}
+    - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5446958887522166012, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: camara
       value: 
@@ -3189,6 +3733,10 @@ PrefabInstance:
     - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: m_Name
       value: Dron simple (176)
+      objectReference: {fileID: 0}
+    - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5446958887522166012, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: camara
@@ -3251,6 +3799,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Dron simple (133)
       objectReference: {fileID: 0}
+    - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5446958887522166012, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: camara
       value: 
@@ -3311,6 +3863,10 @@ PrefabInstance:
     - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: m_Name
       value: Dron simple (144)
+      objectReference: {fileID: 0}
+    - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5446958887522166012, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: camara
@@ -3373,6 +3929,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Dron simple (163)
       objectReference: {fileID: 0}
+    - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5446958887522166012, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: camara
       value: 
@@ -3433,6 +3993,10 @@ PrefabInstance:
     - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: m_Name
       value: Dron simple (100)
+      objectReference: {fileID: 0}
+    - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5446958887522166012, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: camara
@@ -3495,6 +4059,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Dron simple (162)
       objectReference: {fileID: 0}
+    - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5446958887522166012, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: camara
       value: 
@@ -3555,6 +4123,10 @@ PrefabInstance:
     - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: m_Name
       value: Dron simple (170)
+      objectReference: {fileID: 0}
+    - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5446958887522166012, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: camara
@@ -3617,6 +4189,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Dron simple (179)
       objectReference: {fileID: 0}
+    - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5446958887522166012, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: camara
       value: 
@@ -3677,6 +4253,10 @@ PrefabInstance:
     - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: m_Name
       value: Dron simple (182)
+      objectReference: {fileID: 0}
+    - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5446958887522166012, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: camara
@@ -3739,6 +4319,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Dron simple (154)
       objectReference: {fileID: 0}
+    - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5446958887522166012, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: camara
       value: 
@@ -3799,6 +4383,10 @@ PrefabInstance:
     - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: m_Name
       value: Dron simple (171)
+      objectReference: {fileID: 0}
+    - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5446958887522166012, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: camara
@@ -3861,6 +4449,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Dron simple (152)
       objectReference: {fileID: 0}
+    - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5446958887522166012, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: camara
       value: 
@@ -3921,6 +4513,10 @@ PrefabInstance:
     - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: m_Name
       value: Dron simple (186)
+      objectReference: {fileID: 0}
+    - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5446958887522166012, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: camara
@@ -3983,6 +4579,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Dron simple (127)
       objectReference: {fileID: 0}
+    - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5446958887522166012, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: camara
       value: 
@@ -4043,6 +4643,10 @@ PrefabInstance:
     - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: m_Name
       value: Dron simple (147)
+      objectReference: {fileID: 0}
+    - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5446958887522166012, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: camara
@@ -4105,6 +4709,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Dron simple (168)
       objectReference: {fileID: 0}
+    - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5446958887522166012, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: camara
       value: 
@@ -4165,6 +4773,10 @@ PrefabInstance:
     - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: m_Name
       value: Dron simple (119)
+      objectReference: {fileID: 0}
+    - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5446958887522166012, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: camara
@@ -4227,6 +4839,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Dron simple (184)
       objectReference: {fileID: 0}
+    - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5446958887522166012, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: camara
       value: 
@@ -4287,6 +4903,10 @@ PrefabInstance:
     - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: m_Name
       value: Dron simple (156)
+      objectReference: {fileID: 0}
+    - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5446958887522166012, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: camara
@@ -4349,6 +4969,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Dron simple (130)
       objectReference: {fileID: 0}
+    - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5446958887522166012, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: camara
       value: 
@@ -4409,6 +5033,10 @@ PrefabInstance:
     - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: m_Name
       value: Dron simple (185)
+      objectReference: {fileID: 0}
+    - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5446958887522166012, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: camara
@@ -4471,6 +5099,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Dron simple (151)
       objectReference: {fileID: 0}
+    - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5446958887522166012, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: camara
       value: 
@@ -4531,6 +5163,10 @@ PrefabInstance:
     - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: m_Name
       value: Dron simple (173)
+      objectReference: {fileID: 0}
+    - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5446958887522166012, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: camara
@@ -4593,6 +5229,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Dron simple (136)
       objectReference: {fileID: 0}
+    - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5446958887522166012, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: camara
       value: 
@@ -4653,6 +5293,10 @@ PrefabInstance:
     - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: m_Name
       value: Dron simple (124)
+      objectReference: {fileID: 0}
+    - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5446958887522166012, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: camara
@@ -4715,6 +5359,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Dron simple (126)
       objectReference: {fileID: 0}
+    - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5446958887522166012, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: camara
       value: 
@@ -4775,6 +5423,10 @@ PrefabInstance:
     - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: m_Name
       value: Dron simple (160)
+      objectReference: {fileID: 0}
+    - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5446958887522166012, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: camara
@@ -4837,6 +5489,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Dron simple (112)
       objectReference: {fileID: 0}
+    - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5446958887522166012, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: camara
       value: 
@@ -4898,6 +5554,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Dron simple (123)
       objectReference: {fileID: 0}
+    - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5446958887522166012, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: camara
       value: 
@@ -4958,6 +5618,10 @@ PrefabInstance:
     - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: m_Name
       value: Dron simple (122)
+      objectReference: {fileID: 0}
+    - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5446958887522166012, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: camara
@@ -5114,6 +5778,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Dron simple (159)
       objectReference: {fileID: 0}
+    - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5446958887522166012, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: camara
       value: 
@@ -5174,6 +5842,10 @@ PrefabInstance:
     - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: m_Name
       value: Dron simple (183)
+      objectReference: {fileID: 0}
+    - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5446958887522166012, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: camara
@@ -5236,6 +5908,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Dron simple (181)
       objectReference: {fileID: 0}
+    - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5446958887522166012, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: camara
       value: 
@@ -5296,6 +5972,10 @@ PrefabInstance:
     - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: m_Name
       value: Dron simple (155)
+      objectReference: {fileID: 0}
+    - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5446958887522166012, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: camara
@@ -5358,6 +6038,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Dron simple (146)
       objectReference: {fileID: 0}
+    - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5446958887522166012, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: camara
       value: 
@@ -5418,6 +6102,10 @@ PrefabInstance:
     - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: m_Name
       value: Dron simple (137)
+      objectReference: {fileID: 0}
+    - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5446958887522166012, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: camara
@@ -5480,6 +6168,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Dron simple (142)
       objectReference: {fileID: 0}
+    - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5446958887522166012, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: camara
       value: 
@@ -5540,6 +6232,10 @@ PrefabInstance:
     - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: m_Name
       value: Dron simple (192)
+      objectReference: {fileID: 0}
+    - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5446958887522166012, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: camara
@@ -5602,6 +6298,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Dron simple (145)
       objectReference: {fileID: 0}
+    - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5446958887522166012, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: camara
       value: 
@@ -5662,6 +6362,10 @@ PrefabInstance:
     - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: m_Name
       value: Dron simple (199)
+      objectReference: {fileID: 0}
+    - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5446958887522166012, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: camara
@@ -5724,6 +6428,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Dron simple (102)
       objectReference: {fileID: 0}
+    - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5446958887522166012, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: camara
       value: 
@@ -5784,6 +6492,10 @@ PrefabInstance:
     - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: m_Name
       value: Dron simple (140)
+      objectReference: {fileID: 0}
+    - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5446958887522166012, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: camara
@@ -5846,6 +6558,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Dron simple (106)
       objectReference: {fileID: 0}
+    - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5446958887522166012, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: camara
       value: 
@@ -5906,6 +6622,10 @@ PrefabInstance:
     - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: m_Name
       value: Dron simple (174)
+      objectReference: {fileID: 0}
+    - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5446958887522166012, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: camara
@@ -5968,6 +6688,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Dron simple (129)
       objectReference: {fileID: 0}
+    - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5446958887522166012, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: camara
       value: 
@@ -6028,6 +6752,10 @@ PrefabInstance:
     - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: m_Name
       value: Dron simple (191)
+      objectReference: {fileID: 0}
+    - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5446958887522166012, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: camara
@@ -6090,6 +6818,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Dron simple (150)
       objectReference: {fileID: 0}
+    - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5446958887522166012, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: camara
       value: 
@@ -6150,6 +6882,10 @@ PrefabInstance:
     - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: m_Name
       value: Dron simple (143)
+      objectReference: {fileID: 0}
+    - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5446958887522166012, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: camara
@@ -6212,6 +6948,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Dron simple (111)
       objectReference: {fileID: 0}
+    - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5446958887522166012, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: camara
       value: 
@@ -6272,6 +7012,10 @@ PrefabInstance:
     - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: m_Name
       value: Dron simple (115)
+      objectReference: {fileID: 0}
+    - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5446958887522166012, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: camara
@@ -6334,6 +7078,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Dron simple (189)
       objectReference: {fileID: 0}
+    - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5446958887522166012, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: camara
       value: 
@@ -6394,6 +7142,10 @@ PrefabInstance:
     - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: m_Name
       value: Dron simple (180)
+      objectReference: {fileID: 0}
+    - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5446958887522166012, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: camara
@@ -6456,6 +7208,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Dron simple (195)
       objectReference: {fileID: 0}
+    - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5446958887522166012, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: camara
       value: 
@@ -6516,6 +7272,10 @@ PrefabInstance:
     - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: m_Name
       value: Dron simple (121)
+      objectReference: {fileID: 0}
+    - target: {fileID: 797608836708171691, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5446958887522166012, guid: 7815ae99a22f3774eb4ce42b611365b4, type: 3}
       propertyPath: camara
