@@ -6,13 +6,22 @@ class Cell:
         self.z_final = z + grid_size
         self.visited = False
 
-# X: -14 z: 14; X: 16 z: -16
 class Grid:
     def __init__(self, x_init, z_init, x_final, z_final, grid_size):
         self.x_init = x_init
         self.z_init = z_init
-        self.grid = [[Cell(x, z, grid_size) for z in range(z_init, z_final, grid_size)] for x in range(x_init, x_final, grid_size)]
         self.grid_size = grid_size
+        self.grid = []
+
+        x = x_init
+        while x < x_final:
+            row = []
+            z = z_init
+            while z < z_final:
+                row.append(Cell(x, z, grid_size))
+                z += grid_size
+            self.grid.append(row)
+            x += grid_size
         
     def get_cell(self, x, z):
         for row in self.grid:

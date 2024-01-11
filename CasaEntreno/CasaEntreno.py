@@ -107,6 +107,12 @@ Penalties = []
 CurrentScore = 0
 PreviousScore = 0
 Crashed = []
+Grid_coordinates = []
+
+if args.train:
+    Grid_coordinates = [-14.0, -16.0, 16.0, 14.0]
+else:
+    Grid_coordinates = [-12.0, -27.0, 36.0, 15.0]
 
 # Save directory
 directory = f"Elite_simple_{N_OBS}_obs_{N_ACTIONS}_act_dinamic_arquitecture/Experiment2/"
@@ -137,10 +143,24 @@ def SetZones():
     global NumZones
     
     Zones.clear()
-    Zones.append((-13, -6, -2, 0))
-    Zones.append((-13, -14, -2, -6))
-    Zones.append((-2, -14, 15, 0))
-    Zones.append((-13, 0, 15, 13))
+
+    if args.train:
+        Zones.append((-13, -6, -2, 0))
+        Zones.append((-13, -14, -2, -6))
+        Zones.append((-2, -14, 15, 0))
+        Zones.append((-13, 0, 15, 13))
+    else:
+        Zones.append((-6, -3, 0, 3))
+        Zones.append((-12, -15, -6, -3))
+        Zones.append((-12, -27, 0, -3))
+        Zones.append((0, -27, 18, -9))
+        Zones.append((18, -27, 30, -15))
+        Zones.append((24, -15, 36, -9))
+        Zones.append((24, -9, 36, 3))
+        Zones.append((18, 3, 36, 15))
+        Zones.append((12, 3, 18, 15))
+        Zones.append((0, 3, 12, 15))
+        Zones.append((9, -3, 18, 3))
 
     NumZones = len(Zones)
         
@@ -197,7 +217,7 @@ def NewPopulation():
     
     for i in range(PopulationSize):
         model = create_model()
-        Models.append(Drone(model))
+        Models.append(Drone(model, Grid_coordinates))
         Scores.append(0.0)
         Penalties.append(0.0)
         Crashed.append(1)
@@ -307,7 +327,7 @@ def NewGeneration():
                 p2 = random.randint(0,EliteSize-1)
         
             newChild = CrossModels(Elite[p1], Elite[p2])
-            Models.append(Drone(newChild))
+            Models.append(Drone(newChild, Grid_coordinates))
 
 # Saves the models of the last generated elite
 def SaveElite(name = 'Generation1'):
@@ -322,7 +342,7 @@ def LoadElite(name = 'Generation1'):
         path_model = directory + name + ' Individual' + str(x) + '.h5'
         new_model = create_model()
         new_model.load_weights(path_model)
-        Elite.append(Drone(new_model))
+        Elite.append(Drone(new_model, Grid_coordinates))
     print('Elite loaded!')
 
 # Normalizes the values of the lasers between 0 and 1
@@ -414,6 +434,7 @@ def TrainPopulation(env, behavior_name, spec):
                 Tensor = tf.constant(network_input)
                 
                 pred = Models[id].prediction(Tensor)
+
                 pred_array = pred.numpy().flatten()
 
                 if USES_OBS:
@@ -481,7 +502,7 @@ def TrainPopulation(env, behavior_name, spec):
                 if(bestScore < Scores[i] and Crashed[i] == 1):
                     bestScore = Scores[i]
                     best = i
-            print("Step: " + str(steps) + " \t| Crashed: " + str(NumCrashed) + "\t|Best Drone: " + str(best) + "\t|Score of the Best : " + "%.2f" % bestScore + "\t| Zone of the Best: " + str(max(Models[best].explored_zones)))
+            print("Step: " + str(steps) + " \t| Crashed: " + str(NumCrashed) + "\t|Best Drone: " + str(best) + "\t|Score of the Best : " + "%.2f" % bestScore + "\t| Zone of the Best: " + str(max(Models[best].explored_zones)) + "\t| Cells explored: " + str(Models[best].grid_score()))
             
         steps = steps + 1
         
@@ -560,7 +581,7 @@ def ShowPopulationElite(env, behavior_name, spec):
                 posX = state[0]
                 posZ = state[2]
                 
-                # CalculateScore(id, posX, posZ)
+                CalculateScore(id, posX, posZ)
 
                 dist_center = decision_steps[id][0][8][1]
                 dist_left = decision_steps[id][0][8][3]
@@ -594,21 +615,21 @@ def ShowPopulationElite(env, behavior_name, spec):
                 newMovement = pred
                 Movements = np.concatenate((Movements, newMovement), axis=0)
         
-        # for i in range(len(Scores)):
-        #     Scores[i] = Models[i].grid_score() + Penalties[i] + len(Models[i].explored_zones) * NewZoneScore
+        for i in range(len(Scores)):
+            Scores[i] = Models[i].grid_score() + Penalties[i] + len(Models[i].explored_zones) * NewZoneScore
 
         action.add_continuous(Movements)
         env.set_actions(behavior_name, action)
         env.step()
             
-        # if(steps % 25 == 0):
-        #     bestScore = 0
-        #     best = 0
-        #     for i in range(PopulationSize):
-        #         if(bestScore < Scores[i] and Crashed[i] == 1):
-        #             bestScore = Scores[i]
-        #             best = i
-        #     print("Step: " + str(steps) + " \t| Crashed: " + str(NumCrashed) + "\t|Best Drone: " + str(best) + "\t|Score of the Best : " + "%.2f" % bestScore + "\t| Zone of the Best: " + str(max(Models[best].explored_zones)))
+        if(steps % 25 == 0):
+            bestScore = 0
+            best = 0
+            for i in range(PopulationSize):
+                if(bestScore < Scores[i] and Crashed[i] == 1):
+                    bestScore = Scores[i]
+                    best = i
+            print("Step: " + str(steps) + " \t| Crashed: " + str(NumCrashed) + "\t|Best Drone: " + str(best) + "\t|Score of the Best : " + "%.2f" % bestScore + "\t| Zone of the Best: " + str(max(Models[best].explored_zones)))
             
         steps = steps + 1
         
@@ -616,6 +637,7 @@ def ShowPopulationElite(env, behavior_name, spec):
             done = True
         if(NumCrashed >= PopulationSize):
             done = True
+    print('Steps:', steps)
         
 def save_stats():
     max_score = max(Scores)
@@ -714,7 +736,10 @@ def ShowPopulation():
     NewGeneration()
 
     
-    env = UnityEnvironment(file_name=FILE_NAME, seed=1, side_channels=[])
+    channel = EngineConfigurationChannel()
+    channel.set_configuration_parameters(height=1024, width=1024)
+        
+    env = UnityEnvironment(file_name="CasaEntrenoTest.x86_64", seed=1, side_channels=[channel])
     env.reset()
     
     time.sleep(5)
@@ -729,18 +754,23 @@ def ShowPopulation():
     if spec.action_spec.is_discrete():
         print(f"There are {spec.action_spec.discrete_size} discrete actions")
         
-    for i in range(6):
+    aux = "Generation" + str(Epoch)
 
+    test_scores = []
+
+    for i in range(6):
         if(i != 0):
-            Epoch = i*5 + 1
-            aux = "Generation" + str(Epoch)
             env.reset()
             ResetDrones()
             LoadElite(aux)
             NewGeneration()
 
-        print("Showing epoch: " + str(Epoch + 1))
+        print("Showing epoch: " + str(Epoch))
         ShowPopulationElite(env, behavior_name, spec)
+        print("Score of the best drone: ", max(Scores))
+        test_scores.append(max(Scores))
+    
+    print("Test scores:", np.mean(test_scores))
 
 def CreateDirectory():
 
