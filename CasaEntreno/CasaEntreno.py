@@ -452,7 +452,7 @@ def TrainPopulation(env, behavior_name, spec):
                 if(bestScore < Scores[i] and Crashed[i] == 1):
                     bestScore = Scores[i]
                     best = i
-            print("Step: " + str(steps) + " \t| Crashed: " + str(NumCrashed) + "\t|Best Drone: " + str(best) + "\t|Score of the Best : " + "%.2f" % bestScore + "\t| Zone of the Best: " + str(max(Models[best].explored_zones))) + "\t| Cells explored: " + str(Models[best].grid_score())
+            print("Step: " + str(steps) + " \t| Crashed: " + str(NumCrashed) + "\t|Best Drone: " + str(best) + "\t|Score of the Best : " + "%.2f" % bestScore + "\t| Zone of the Best: " + str(max(Models[best].explored_zones)) + "\t| Cells explored: " + str(Models[best].grid_score()))
             
         steps = steps + 1
         
