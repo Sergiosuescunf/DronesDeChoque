@@ -1,7 +1,7 @@
 from grid import Grid
 import tensorflow as tf
 
-GRID_SIZE = 0.5
+GRID_SIZE = 1
 
 class Drone:
     def __init__(self, modelo, grid_coordinates):

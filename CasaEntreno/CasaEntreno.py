@@ -67,15 +67,23 @@ print("")
 print("Train:", args.train)
 print("no_graph:", NO_GRAPH)
 
+# TODO: Poner todas las puntuaciones entre 0 y 1 con sus pesos añadir puntuacion constante entre 0 y 10 que tenga en cuenta cuanto anda hacia delante menos los laterales ([alante - abs(laterales)] * 10(ejemplo))
 
 # Score attributes
 NumZones = 0
-ZoneScore = 50
-Penalty = 40
-ProximityPenalty = 20
 NewZoneScore = 100
 MaxDistance = 0.55
-Zones = [] 
+
+## Score weights
+w_grid_score = 1
+w_zones_score = 100
+w_movement_score = 10
+
+## w_crash_penalty weights
+w_crash_penalty = 50
+w_proximity_penalty = 20
+
+Zones = []
 
 # Population Variables
 PopulationSize = args.population_size
@@ -87,7 +95,7 @@ MaxEpochs = args.max_generations
 MaxSteps = 2000
 
 # Normalize Lasers
-normalize = True
+normalize = False
 
 # Mutation Variables
 AdjustMutation = False
@@ -103,7 +111,8 @@ MaxMR = 0.2
 Models = []
 Elite = []
 Scores = [] 
-Penalties = []
+MovementScores = []
+ProximityPenalties = []
 CurrentScore = 0
 PreviousScore = 0
 Crashed = []
@@ -181,7 +190,7 @@ def CalculateZone(x, z):
         
     return 0
 
-def CalculateScore(id, x, z):
+def UpdateZonesAndGrid(id, x, z):
     
     zone = CalculateZone(x, z)
     
@@ -190,47 +199,75 @@ def CalculateScore(id, x, z):
     
     Models[id].update_grid(x,z) 
 
+def CalculateGridScore(id):
+
+    # return w_grid_score * (Models[id].total_cells() - Models[id].grid_score())/Models[id].total_cells()
+    return Models[id].grid_score()
+
+def CalculateExploredZones(id):
+    if len(Models[id].explored_zones) == 1:
+        return 0
+    total_zones_score = NumZones * NewZoneScore
+    zones_score = (len(Models[id].explored_zones)-1) * NewZoneScore
+    
+    return w_zones_score * (total_zones_score - zones_score)/total_zones_score
+
+def CalculateScore(grid_score, explored_zones_score, proximy_penalty, crashed_penalty):
+    return grid_score + explored_zones_score - crashed_penalty - proximy_penalty
+
 def DistancePenalty(distance):
-    return -ProximityPenalty * (MaxDistance - distance)/MaxDistance 
+    return w_proximity_penalty * (MaxDistance - distance)/MaxDistance 
 
 def CalculateDistancePenalty(id, dist_center, dist_left, dist_right):
 
     if dist_center <= MaxDistance:
         pen_center = DistancePenalty(dist_center)
-        Penalties[id] += pen_center
+        ProximityPenalties[id] += pen_center
 
     if dist_left <= MaxDistance:
         pen_left = DistancePenalty(dist_left)
-        Penalties[id] += pen_left
+        ProximityPenalties[id] += pen_left
 
     if dist_right <= MaxDistance:
         pen_right = DistancePenalty(dist_right)
-        Penalties[id] += pen_right
+        ProximityPenalties[id] += pen_right
+
+def CalculateMovementScore(id, movement):
+    movement_score = w_movement_score * (movement[1] - abs(movement[0]))
+    if movement_score < 0:
+        movement_score = 0
+    
+    MovementScores[id] += movement_score
+    
 
 # Generates a new population from scratch
 def NewPopulation():
     
     Models.clear()
     Scores.clear()
-    Penalties.clear()
+    ProximityPenalties.clear()
+    MovementScores.clear()
     Crashed.clear()
     
     for i in range(PopulationSize):
         model = create_model()
         Models.append(Drone(model, Grid_coordinates))
         Scores.append(0.0)
-        Penalties.append(0.0)
+        ProximityPenalties.append(0.0)
+        MovementScores.append(0.0)
         Crashed.append(1)
         
 def ResetDrones():
     Scores.clear()
     Crashed.clear()
-    Penalties.clear()
+    ProximityPenalties.clear()
+    MovementScores.clear()
     for i in range(PopulationSize):
         Models[i].explored_zones.clear()
         Models[i].clean_grid()
         Scores.append(0.0)
-        Penalties.append(0.0)
+        ProximityPenalties.append(0.0)
+        MovementScores.append(0.0)
         Crashed.append(1)
         
 # Selects the best individuals of the generation as Elite
@@ -437,6 +474,8 @@ def TrainPopulation(env, behavior_name, spec):
 
                 pred_array = pred.numpy().flatten()
 
+                CalculateMovementScore(id, pred_array)
+
                 if USES_OBS:
                     obs_history[id].append(Lasers)  # Add the new action
 
@@ -453,7 +492,7 @@ def TrainPopulation(env, behavior_name, spec):
                 posX = state[0]
                 posZ = state[2]
                 
-                CalculateScore(id, posX, posZ)
+                UpdateZonesAndGrid(id, posX, posZ)
 
                 dist_center = decision_steps[id][0][8][1]
                 dist_left = decision_steps[id][0][8][3]
@@ -489,7 +528,11 @@ def TrainPopulation(env, behavior_name, spec):
                 Movements = np.concatenate((Movements, newMovement), axis=0)
         
         for i in range(len(Scores)):
-            Scores[i] = Models[i].grid_score() + Penalties[i] + (len(Models[i].explored_zones)-1)  * NewZoneScore - int(Models[i].crashed) * Penalty
+            grid_score = CalculateGridScore(i)
+            explored_zones_score = CalculateExploredZones(i)
+            crash_penalty = int(Models[i].crashed) * w_crash_penalty
+            proximy_penalty = ProximityPenalties[i]
+            Scores[i] = CalculateScore(grid_score, explored_zones_score, proximy_penalty, crash_penalty)
 
         action.add_continuous(Movements)
         env.set_actions(behavior_name, action)
@@ -539,7 +582,7 @@ def ShowPopulationElite(env, behavior_name, spec):
     action = spec.action_spec.random_action(len(decision_steps))
 
     # Initialize the action history for each agent
-    action_history = {id: [np.zeros(78, dtype=np.float32) for _ in range(N_OBS)] for id in range(PopulationSize)}
+    action_history = {id: [np.zeros(2, dtype=np.float32) for _ in range(N_ACTIONS)] for id in range(PopulationSize)}
 
     pred = np.array([0, 0, 0, 0], dtype = np.float32)
     
@@ -571,17 +614,20 @@ def ShowPopulationElite(env, behavior_name, spec):
                 Tensor = tf.constant(network_input)
                 
                 pred = Models[id].prediction(Tensor)
+                pred_array = pred.numpy().flatten()
 
-                if len(action_history[id]) >= N_OBS:
+                CalculateMovementScore(id, pred_array)
+
+                if len(action_history[id]) >= N_ACTIONS:
                     action_history[id].pop(0)  # Remove the oldest action if we already have n actions
                 
-                action_history[id].append(Lasers)  # Add the new action
+                action_history[id].append(pred_array)  # Add the new action
 
                 state = decision_steps[id][0][9]
                 posX = state[0]
                 posZ = state[2]
                 
-                CalculateScore(id, posX, posZ)
+                UpdateZonesAndGrid(id, posX, posZ)
 
                 dist_center = decision_steps[id][0][8][1]
                 dist_left = decision_steps[id][0][8][3]
@@ -616,7 +662,11 @@ def ShowPopulationElite(env, behavior_name, spec):
                 Movements = np.concatenate((Movements, newMovement), axis=0)
         
         for i in range(len(Scores)):
-            Scores[i] = Models[i].grid_score() + Penalties[i] + len(Models[i].explored_zones) * NewZoneScore
+            grid_score = CalculateGridScore(i)
+            explored_zones_score = CalculateExploredZones(i)
+            crash_penalty = int(Models[i].crashed) * w_crash_penalty
+            proximy_penalty = ProximityPenalties[i]
+            Scores[i] = CalculateScore(grid_score, explored_zones_score, proximy_penalty, crash_penalty)
 
         action.add_continuous(Movements)
         env.set_actions(behavior_name, action)
