@@ -75,7 +75,7 @@ NewZoneScore = 100
 MaxDistance = 0.55
 
 ## Score weights
-w_grid_score = 1
+w_grid_score = 500
 w_zones_score = 100
 w_movement_score = 10
 
@@ -200,17 +200,13 @@ def UpdateZonesAndGrid(id, x, z):
     Models[id].update_grid(x,z) 
 
 def CalculateGridScore(id):
-
-    # return w_grid_score * (Models[id].total_cells() - Models[id].grid_score())/Models[id].total_cells()
-    return Models[id].grid_score()
+    return w_grid_score * (Models[id].total_cells() - Models[id].grid_score())/Models[id].total_cells()
 
 def CalculateExploredZones(id):
     if len(Models[id].explored_zones) == 1:
         return 0
-    total_zones_score = NumZones * NewZoneScore
-    zones_score = (len(Models[id].explored_zones)-1) * NewZoneScore
     
-    return w_zones_score * (total_zones_score - zones_score)/total_zones_score
+    return w_zones_score * (NumZones - len(Models[id].explored_zones)-1)/NumZones
 
 def CalculateScore(grid_score, explored_zones_score, proximy_penalty, crashed_penalty):
     return grid_score + explored_zones_score - crashed_penalty - proximy_penalty
