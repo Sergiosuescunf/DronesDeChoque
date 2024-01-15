@@ -35,7 +35,7 @@ parser.add_argument("-g", "--generation", type=int, help="Number of generation t
 parser.add_argument("-mg", "--max_generations", type=int, help="Max number of generations", default=200)
 parser.add_argument("-ps", "--population_size", type=int, help="Number of individuals per generation", default=200)
 parser.add_argument("-es", "--elite_size", type=int, help="Number of elite individuals per generation", default=10)
-parser.add_argument("-t", "--train", type=bool, help="Train the population", default=False)
+parser.add_argument("-t", "--train", type=bool, help="Train the population", default=True)
 parser.add_argument("-ng", "--nographics", type=bool, help="Don't show graphics", default=False)
 
 args = parser.parse_args()
@@ -75,7 +75,7 @@ NewZoneScore = 100
 MaxDistance = 0.55
 
 ## Score weights
-w_grid_score = 500
+w_grid_score = 70
 w_zones_score = 100
 w_movement_score = 10
 
@@ -200,7 +200,7 @@ def UpdateZonesAndGrid(id, x, z):
     Models[id].update_grid(x,z) 
 
 def CalculateGridScore(id):
-    return w_grid_score * (Models[id].total_cells() - Models[id].grid_score())/Models[id].total_cells()
+    return w_grid_score * (Models[id].grid_score()/Models[id].total_cells())
 
 def CalculateExploredZones(id):
     if len(Models[id].explored_zones) == 1:
