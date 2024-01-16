@@ -35,7 +35,7 @@ parser.add_argument("-g", "--generation", type=int, help="Number of generation t
 parser.add_argument("-mg", "--max_generations", type=int, help="Max number of generations", default=200)
 parser.add_argument("-ps", "--population_size", type=int, help="Number of individuals per generation", default=200)
 parser.add_argument("-es", "--elite_size", type=int, help="Number of elite individuals per generation", default=10)
-parser.add_argument("-t", "--train", type=bool, help="Train the population", default=True)
+parser.add_argument("-t", "--train", type=bool, help="Train the population", default=False)
 parser.add_argument("-ng", "--nographics", type=bool, help="Don't show graphics", default=False)
 
 args = parser.parse_args()
@@ -159,6 +159,10 @@ def SetZones():
         Zones.append((-2, -14, 15, 0))
         Zones.append((-13, 0, 15, 13))
     else:
+        # Zones.append((-13, -6, -2, 0))
+        # Zones.append((-13, -14, -2, -6))
+        # Zones.append((-2, -14, 15, 0))
+        # Zones.append((-13, 0, 15, 13))
         Zones.append((-6, -3, 0, 3))
         Zones.append((-12, -15, -6, -3))
         Zones.append((-12, -27, 0, -3))
@@ -208,8 +212,8 @@ def CalculateExploredZones(id):
     
     return w_zones_score * (NumZones - len(Models[id].explored_zones)-1)/NumZones
 
-def CalculateScore(grid_score, explored_zones_score, proximy_penalty, crashed_penalty):
-    return grid_score + explored_zones_score - crashed_penalty - proximy_penalty
+def CalculateScore(grid_score, explored_zones_score, movement_score, proximy_penalty, crashed_penalty):
+    return grid_score + explored_zones_score + movement_score - crashed_penalty - proximy_penalty
 
 def DistancePenalty(distance):
     return w_proximity_penalty * (MaxDistance - distance)/MaxDistance 
@@ -528,7 +532,8 @@ def TrainPopulation(env, behavior_name, spec):
             explored_zones_score = CalculateExploredZones(i)
             crash_penalty = int(Models[i].crashed) * w_crash_penalty
             proximy_penalty = ProximityPenalties[i]
-            Scores[i] = CalculateScore(grid_score, explored_zones_score, proximy_penalty, crash_penalty)
+            movement_score = MovementScores[i]
+            Scores[i] = CalculateScore(grid_score, explored_zones_score, movement_score, proximy_penalty, crash_penalty)
 
         action.add_continuous(Movements)
         env.set_actions(behavior_name, action)
@@ -662,7 +667,8 @@ def ShowPopulationElite(env, behavior_name, spec):
             explored_zones_score = CalculateExploredZones(i)
             crash_penalty = int(Models[i].crashed) * w_crash_penalty
             proximy_penalty = ProximityPenalties[i]
-            Scores[i] = CalculateScore(grid_score, explored_zones_score, proximy_penalty, crash_penalty)
+            movement_score = MovementScores[i]
+            Scores[i] = CalculateScore(grid_score, explored_zones_score, movement_score, proximy_penalty, crash_penalty)
 
         action.add_continuous(Movements)
         env.set_actions(behavior_name, action)
@@ -675,7 +681,7 @@ def ShowPopulationElite(env, behavior_name, spec):
                 if(bestScore < Scores[i] and Crashed[i] == 1):
                     bestScore = Scores[i]
                     best = i
-            print("Step: " + str(steps) + " \t| Crashed: " + str(NumCrashed) + "\t|Best Drone: " + str(best) + "\t|Score of the Best : " + "%.2f" % bestScore + "\t| Zone of the Best: " + str(max(Models[best].explored_zones)))
+            print("Step: " + str(steps) + " \t| Crashed: " + str(NumCrashed) + "\t|Best Drone: " + str(best) + "\t|Score of the Best : " + "%.2f" % bestScore + "\t| Zone of the Best: " + str(max(Models[best].explored_zones)) + "\t| Cells explored: " + str(Models[best].grid_score()))
             
         steps = steps + 1
         
