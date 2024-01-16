@@ -22,7 +22,7 @@ if os_name == 'posix':
     FILE_NAME = 'CasaEntreno.x86_64'
     CLEAR_COMMAND = 'clear'
 elif os_name == 'nt':
-    FILE_NAME = 'CasaEntreno.exe'
+    FILE_NAME = 'EdificioEntreno.exe'
     CLEAR_COMMAND = 'cls'
 
 parser = argparse.ArgumentParser(description="Specify the architecture and train parameters.")
@@ -32,8 +32,8 @@ parser.add_argument("-i", "--inputs", type=int, help="Number of inputs", default
 parser.add_argument("-a", "--actions", type=int, help="Number of previous actions", default=0)
 parser.add_argument("-o", "--obs", type=int, help="Number of previous observations", default=0)
 parser.add_argument("-g", "--generation", type=int, help="Number of generation to start", default=0)
-parser.add_argument("-mg", "--max_generations", type=int, help="Max number of generations", default=100)
-parser.add_argument("-ps", "--population_size", type=int, help="Number of individuals per generation", default=100)
+parser.add_argument("-mg", "--max_generations", type=int, help="Max number of generations", default=200)
+parser.add_argument("-ps", "--population_size", type=int, help="Number of individuals per generation", default=200)
 parser.add_argument("-es", "--elite_size", type=int, help="Number of elite individuals per generation", default=10)
 parser.add_argument("-t", "--train", type=bool, help="Train the population", default=False)
 parser.add_argument("-ng", "--nographics", type=bool, help="Don't show graphics", default=False)
@@ -70,10 +70,10 @@ print("no_graph:", NO_GRAPH)
 
 # Score attributes
 NumZones = 0
-ZoneScore = 100
-Penalty = 150
+ZoneScore = 50
+Penalty = 40
 ProximityPenalty = 20
-NewZoneScore = 200
+NewZoneScore = 100
 MaxDistance = 0.55
 Zones = [] 
 
@@ -84,7 +84,7 @@ Epoch = 0
 GameEpoch = args.generation
 print("GameEpoch:", GameEpoch)  
 MaxEpochs = args.max_generations 
-MaxSteps = 500
+MaxSteps = 2000
 
 # Normalize Lasers
 normalize = True
@@ -404,7 +404,7 @@ def TrainPopulation(env, behavior_name, spec):
         Movements = [[]]
         
         for id in decision_steps.agent_id:
-            
+                
             if(Crashed[id] == 1):
                 
                 Lasers = np.atleast_2d([])
@@ -550,7 +550,7 @@ def ShowPopulationElite(env, behavior_name, spec):
         Movements = [[]]
         
         for id in decision_steps.agent_id:
-            
+                
             if(Crashed[id] == 1):
                 
                 Lasers = np.atleast_2d([])
@@ -685,7 +685,7 @@ def Train():
         NewGeneration()
 
     channel = EngineConfigurationChannel()
-    channel.set_configuration_parameters(height=1280, width=960)
+    channel.set_configuration_parameters(height=1024, width=1024)
         
     env = UnityEnvironment(file_name=FILE_NAME, seed=1, no_graphics=NO_GRAPH, side_channels=[channel])
     env.reset()
@@ -737,7 +737,7 @@ def ShowPopulation():
 
     
     channel = EngineConfigurationChannel()
-    channel.set_configuration_parameters(height=1280, width=960)
+    channel.set_configuration_parameters(height=1024, width=1024)
         
     env = UnityEnvironment(file_name="CasaEntrenoTest.x86_64", seed=1, side_channels=[channel])
     env.reset()
