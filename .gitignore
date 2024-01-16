@@ -13,6 +13,7 @@ CasaEntreno/UnityPlayer.so
 CasaEntreno/__pycache__/*
 CasaEntreno/CasaEntreno_BurstDebugInformation_DoNotShip/*
 CasaEntreno/CasaEntreno_Data/*
+Carrera/Carrera_Data/*
 Proyecto Unity/.vscode/settings.json
 Proyecto Unity/ProjectSettings/BurstAotSettings_StandaloneLinux64.json
 Proyecto Unity/ProjectSettings/ProjectSettings.asset
