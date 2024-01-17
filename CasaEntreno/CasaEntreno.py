@@ -70,16 +70,12 @@ print("no_graph:", NO_GRAPH)
 
 # Score attributes
 NumZones = 0
-ZoneScore = 100
-Penalty = 150
-ProximityPenalty = 20
-NewZoneScore = 200
 MaxDistance = 0.55
 
 ## Score weights
-w_grid_score = 70
+w_grid_score = 1
 w_zones_score = 100
-w_movement_score = 10
+w_movement_score = 1
 
 ## w_crash_penalty weights
 w_crash_penalty = 50
@@ -94,7 +90,7 @@ Epoch = 0
 GameEpoch = args.generation
 print("GameEpoch:", GameEpoch)  
 MaxEpochs = args.max_generations 
-MaxSteps = 500
+MaxSteps = 2000
 
 # Normalize Lasers
 normalize = False
