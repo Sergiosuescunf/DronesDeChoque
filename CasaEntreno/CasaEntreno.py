@@ -67,15 +67,13 @@ print("")
 print("Train:", args.train)
 print("no_graph:", NO_GRAPH)
 
-# TODO: Poner todas las puntuaciones entre 0 y 1 con sus pesos añadir puntuacion constante entre 0 y 10 que tenga en cuenta cuanto anda hacia delante menos los laterales ([alante - abs(laterales)] * 10(ejemplo))
 
 # Score attributes
 NumZones = 0
-NewZoneScore = 100
 MaxDistance = 0.55
 
 ## Score weights
-w_grid_score = 70
+w_grid_score = 1
 w_zones_score = 100
 w_movement_score = 0.01
 
@@ -441,7 +439,7 @@ def TrainPopulation(env, behavior_name, spec):
         Movements = [[]]
         
         for id in decision_steps.agent_id:
-                
+            
             if(Crashed[id] == 1):
                 
                 Lasers = np.atleast_2d([])
@@ -602,7 +600,7 @@ def ShowPopulationElite(env, behavior_name, spec):
         Movements = [[]]
         
         for id in decision_steps.agent_id:
-                
+            
             if(Crashed[id] == 1):
                 
                 Lasers = np.atleast_2d([])
@@ -763,7 +761,7 @@ def Train():
         NewGeneration()
 
     channel = EngineConfigurationChannel()
-    channel.set_configuration_parameters(height=1024, width=1024)
+    channel.set_configuration_parameters(height=1280, width=960)
         
     env = UnityEnvironment(file_name=FILE_NAME, seed=1, no_graphics=NO_GRAPH, side_channels=[channel])
     env.reset()
@@ -815,7 +813,7 @@ def ShowPopulation():
 
     
     channel = EngineConfigurationChannel()
-    channel.set_configuration_parameters(height=1024, width=1024)
+    channel.set_configuration_parameters(height=1280, width=960)
         
     env = UnityEnvironment(file_name="CasaEntrenoTest.x86_64", seed=1, side_channels=[channel])
     env.reset()
