@@ -32,7 +32,7 @@ parser.add_argument("-i", "--inputs", type=int, help="Number of inputs", default
 parser.add_argument("-a", "--actions", type=int, help="Number of previous actions", default=0)
 parser.add_argument("-o", "--obs", type=int, help="Number of previous observations", default=0)
 parser.add_argument("-g", "--generation", type=int, help="Number of generation to start", default=0)
-parser.add_argument("-mg", "--max_generations", type=int, help="Max number of generations", default=100)
+parser.add_argument("-mg", "--max_generations", type=int, help="Max number of generations", default=200)
 parser.add_argument("-ps", "--population_size", type=int, help="Number of individuals per generation", default=100)
 parser.add_argument("-es", "--elite_size", type=int, help="Number of elite individuals per generation", default=10)
 parser.add_argument("-t", "--train", type=bool, help="Train the population", default=False)
@@ -75,7 +75,7 @@ MaxDistance = 0.55
 ## Score weights
 w_grid_score = 1
 w_zones_score = 100
-w_movement_score = 1
+w_movement_score = 0.01
 
 ## w_crash_penalty weights
 w_crash_penalty = 50
@@ -496,7 +496,7 @@ def TrainPopulation(env, behavior_name, spec):
                 dist_left = decision_steps[id][0][8][3]
                 dist_right = decision_steps[id][0][8][5]
 
-                CalculateDistancePenalty(id, dist_center, dist_left, dist_right)
+                # CalculateDistancePenalty(id, dist_center, dist_left, dist_right)
                 
                 if state[3] == 0:
                     Crashed[id] = 0
@@ -580,8 +580,16 @@ def ShowPopulationElite(env, behavior_name, spec):
     decision_steps, terminal_steps = env.get_steps(behavior_name)
     action = spec.action_spec.random_action(len(decision_steps))
 
-    # Initialize the action history for each agent
-    action_history = {id: [np.zeros(78, dtype=np.float32) for _ in range(N_OBS)] for id in range(PopulationSize)}
+    obs_history = {}
+    act_history = {}
+
+    # Initialize the observation history for each agent
+    if USES_OBS:
+        obs_history = {id: [np.zeros(78, dtype=np.float32) for _ in range(N_OBS)] for id in range(PopulationSize)}
+
+    # Initialize the observation history for each agent
+    if USES_ACT:
+        act_history = {id: [np.zeros(N_INPUTS, dtype=np.float32) for _ in range(N_ACTIONS)] for id in range(PopulationSize)}
 
     pred = np.array([0, 0, 0, 0], dtype = np.float32)
     
@@ -605,10 +613,19 @@ def ShowPopulationElite(env, behavior_name, spec):
                 height = np.atleast_2d([decision_steps[id][0][7][1]])
                 if(normalize):
                     Lasers = Normalize(Lasers)
+
                 Lasers = np.concatenate((Lasers, height), axis=1)
 
-                flattened_history = np.concatenate([action.flatten() for action in action_history[id]])
-                network_input = np.concatenate([Lasers.flatten(), flattened_history])
+                network_input = Lasers.flatten()
+                
+                if USES_OBS:
+                    flattened_obs_history = np.concatenate([action.flatten() for action in obs_history[id]])
+                    network_input = np.concatenate([network_input, flattened_obs_history])
+
+                if USES_ACT:
+                    flattened_act_history = np.concatenate([action.flatten() for action in act_history[id]])
+                    network_input = np.concatenate([network_input, flattened_act_history])
+
                 network_input = network_input.reshape(1, -1)
                 Tensor = tf.constant(network_input)
                 
@@ -618,14 +635,17 @@ def ShowPopulationElite(env, behavior_name, spec):
 
                 CalculateMovementScore(id, pred_array)
 
-                if len(action_history[id]) >= N_OBS:
-                    #obs_history[id].pop(0)  # Remove the oldest action if we already have n actions
-                    pass
+                if USES_OBS:
+                    obs_history[id].append(Lasers)  # Add the new action
 
-                if len(action_history[id]) >= N_ACTIONS:
-                    action_history[id].pop(0)  # Remove the oldest action if we already have n actions
-                
-                action_history[id].append(Lasers)  # Add the new action
+                    if len(obs_history[id]) >= N_OBS:
+                        obs_history[id].pop(0)  # Remove the oldest action if we already have n actions
+
+                if USES_ACT:
+                    act_history[id].append(pred_array)  # Add the new action
+
+                    if len(act_history[id]) >= N_ACTIONS:
+                        act_history[id].pop(0)  # Remove the oldest action if we already have n actions
 
                 state = decision_steps[id][0][9]
                 posX = state[0]
@@ -638,7 +658,7 @@ def ShowPopulationElite(env, behavior_name, spec):
                 dist_right = decision_steps[id][0][8][5]
 
                 CalculateDistancePenalty(id, dist_center, dist_left, dist_right)
-                                
+                
                 if state[3] == 0:
                     Crashed[id] = 0
                     Models[id].crashed = True
@@ -647,6 +667,7 @@ def ShowPopulationElite(env, behavior_name, spec):
             else:
                 pred = np.array([[0, 0]], dtype = np.float32)
             
+
             if(Crashed[id] == 0):
                 pred = np.concatenate((pred, np.array([[0.1]])), axis=1)
             elif(id == 0 and steps < 11):
