@@ -4,11 +4,9 @@
 **/*_BurstDebugInformation_DoNotShip/*
 **/*_Data/*
 **/MonoBleedingEdge/*
+
 **/.plastic/*
-DronPruebas/
-CircuitoEntreno/
-PistaEntreno/
-PistaPruebas/
+
 CasaEntreno/coche_unity_neat.py
 CasaEntreno/Entrenar_neat.py
 CasaEntreno/CasaEntreno.x86_64
