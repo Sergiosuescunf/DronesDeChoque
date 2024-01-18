@@ -8,6 +8,7 @@ import os
 import time
 
 import argparse
+import multiprocessing
 
 from mlagents_envs.environment import UnityEnvironment
 from mlagents_envs.side_channel.engine_configuration_channel import EngineConfigurationChannel
@@ -29,13 +30,13 @@ parser = argparse.ArgumentParser(description="Specify the architecture and train
 
 # Define los argumentos que aceptará el programa
 parser.add_argument("-i", "--inputs", type=int, help="Number of inputs", default=2)
-parser.add_argument("-a", "--actions", type=int, help="Number of previous actions", default=0)
+parser.add_argument("-a", "--actions", type=int, help="Number of previous actions", default=4)
 parser.add_argument("-o", "--obs", type=int, help="Number of previous observations", default=0)
 parser.add_argument("-g", "--generation", type=int, help="Number of generation to start", default=0)
 parser.add_argument("-mg", "--max_generations", type=int, help="Max number of generations", default=200)
 parser.add_argument("-ps", "--population_size", type=int, help="Number of individuals per generation", default=100)
 parser.add_argument("-es", "--elite_size", type=int, help="Number of elite individuals per generation", default=10)
-parser.add_argument("-t", "--train", type=bool, help="Train the population", default=False)
+parser.add_argument("-t", "--train", type=bool, help="Train the population", default=True)
 parser.add_argument("-ng", "--nographics", type=bool, help="Don't show graphics", default=False)
 
 args = parser.parse_args()
@@ -67,13 +68,15 @@ print("")
 print("Train:", args.train)
 print("no_graph:", NO_GRAPH)
 
+# TODO: Poner todas las puntuaciones entre 0 y 1 con sus pesos añadir puntuacion constante entre 0 y 10 que tenga en cuenta cuanto anda hacia delante menos los laterales ([alante - abs(laterales)] * 10(ejemplo))
 
 # Score attributes
 NumZones = 0
+NewZoneScore = 100
 MaxDistance = 0.55
 
 ## Score weights
-w_grid_score = 300
+w_grid_score = 70
 w_zones_score = 100
 w_movement_score = 0.01
 
@@ -122,7 +125,7 @@ else:
     Grid_coordinates = [-12.0, -27.0, 36.0, 15.0]
 
 # Save directory
-directory = f"Elite_simple_{N_OBS}_obs_{N_ACTIONS}_act_dinamic_arquitecture/Experiment3/"
+directory = f"Elite_simple_{N_OBS}_obs_{N_ACTIONS}_act_dinamic_arquitecture/Experiment2/"
 
 # Model
 def create_model():
@@ -193,21 +196,24 @@ def CalculateZone(x, z):
     return 0
 
 def UpdateZonesAndGrid(id, x, z):
-    
+    print('UPDATE ZONES AND GRID')
     zone = CalculateZone(x, z)
-
-    Models[id].actual_zone = zone
     
     if(zone not in Models[id].explored_zones):
         Models[id].explored_zones.append(zone)
     
     Models[id].update_grid(x,z) 
+    for i in range(len(Models)):
+        print('ID:', i, 'Explored zones:', Models[i].explored_zones)
 
 def CalculateGridScore(id):
     return w_grid_score * (Models[id].grid_score()/Models[id].total_cells())
 
 def CalculateExploredZones(id):
-    return w_zones_score * (len(Models[id].explored_zones)/NumZones)
+    if len(Models[id].explored_zones) == 1:
+        return 0
+    
+    return w_zones_score * (NumZones - len(Models[id].explored_zones)-1)/NumZones
 
 def CalculateScore(grid_score, explored_zones_score, movement_score, proximy_penalty, crashed_penalty):
     return grid_score + explored_zones_score + movement_score - crashed_penalty - proximy_penalty
@@ -398,8 +404,96 @@ def Normalize(Lasers):
         
     return Lasers
 
+def process_agent(id, decision_steps, Models, steps, best):
+    # global obs_history
+    # global act_history
+
+    if(Crashed[id] == 1):
+        Lasers = np.atleast_2d([])
+        
+        for i in range(7):
+            laser = decision_steps[id][0][i]
+            reading = np.atleast_2d([laser[21], laser[17], laser[13], laser[9], laser[5], laser[1], laser[3], laser[7], laser[11], laser[15], laser[19]])
+            Lasers  = np.concatenate((Lasers, reading), axis=1)
+        
+        height = np.atleast_2d([decision_steps[id][0][7][1]])
+        if(normalize):
+            Lasers = Normalize(Lasers)
+
+        Lasers = np.concatenate((Lasers, height), axis=1)
+
+        network_input = Lasers.flatten()
+        
+        if USES_OBS:
+            flattened_obs_history = np.concatenate([action.flatten() for action in obs_history[id]])
+            network_input = np.concatenate([network_input, flattened_obs_history])
+
+        if USES_ACT:
+            flattened_act_history = np.concatenate([action.flatten() for action in act_history[id]])
+            network_input = np.concatenate([network_input, flattened_act_history])
+
+        network_input = network_input.reshape(1, -1)
+        Tensor = tf.constant(network_input)
+        
+        pred = Models[id].prediction(Tensor)
+
+        pred_array = pred.numpy().flatten()
+
+        CalculateMovementScore(id, pred_array)
+
+        if USES_OBS:
+            obs_history[id].append(Lasers)  # Add the new action
+
+            if len(obs_history[id]) >= N_OBS:
+                obs_history[id].pop(0)  # Remove the oldest action if we already have n actions
+
+        if USES_ACT:
+            act_history[id].append(pred_array)  # Add the new action
+
+            if len(act_history[id]) >= N_ACTIONS:
+                act_history[id].pop(0)  # Remove the oldest action if we already have n actions
+
+            if id == 0:
+                print(act_history[id])
+        state = decision_steps[id][0][9]
+        posX = state[0]
+        posZ = state[2]
+        
+        UpdateZonesAndGrid(id, posX, posZ)
+
+        dist_center = decision_steps[id][0][8][1]
+        dist_left = decision_steps[id][0][8][3]
+        dist_right = decision_steps[id][0][8][5]
+
+        # CalculateDistancePenalty(id, dist_center, dist_left, dist_right)
+        
+        if state[3] == 0:
+            Crashed[id] = 0
+            Models[id].crashed = True
+            
+    else:
+        pred = np.array([[0, 0]], dtype = np.float32)
+
+    if(Crashed[id] == 0):
+        pred = np.concatenate((pred, np.array([[0.1]])), axis=1)
+    elif(id == 0 and steps < 11):
+        pred = np.concatenate((pred, np.array([[0.2]])), axis=1)
+    elif(Crashed[0] == 0 and id == best):
+        pred = np.concatenate((pred, np.array([[0.2]])), axis=1)
+    elif(id < EliteSize):
+        pred = np.concatenate((pred, np.array([[0.3]])), axis=1)    
+    else:
+        pred = np.concatenate((pred, np.array([[0]])), axis=1)
+
+    return id, pred
+
+obs_history = {}
+act_history = {}
+
 # Trains a population
 def TrainPopulation(env, behavior_name, spec):
+    global obs_history
+    global act_history
 
     # TODO: remove if not needed
     # if(Epoch < 39):
@@ -418,8 +512,7 @@ def TrainPopulation(env, behavior_name, spec):
     decision_steps, terminal_steps = env.get_steps(behavior_name)
     action = spec.action_spec.random_action(len(decision_steps))
 
-    obs_history = {}
-    act_history = {}
+    
 
     # Initialize the observation history for each agent
     if USES_OBS:
@@ -435,96 +528,31 @@ def TrainPopulation(env, behavior_name, spec):
     while not done:
         
         decision_steps, terminal_steps = env.get_steps(behavior_name)
-        Movements = [[]]
+        Movements = np.array([[]])
         
-        for id in decision_steps.agent_id:
-            
-            if(Crashed[id] == 1):
-                
-                Lasers = np.atleast_2d([])
-                
-                for i in range(7):
-                    laser = decision_steps[id][0][i]
-                    reading = np.atleast_2d([laser[21], laser[17], laser[13], laser[9], laser[5], laser[1], laser[3], laser[7], laser[11], laser[15], laser[19]])
-                    Lasers  = np.concatenate((Lasers, reading), axis=1)
-                
-                height = np.atleast_2d([decision_steps[id][0][7][1]])
-                if(normalize):
-                    Lasers = Normalize(Lasers)
+        if USES_OBS and USES_ACT:
+            task_data = [(id, decision_steps, Models, steps, best) for id in decision_steps.agent_id]        
+        if USES_ACT:
+            task_data = [(id, decision_steps, Models, steps, best) for id in decision_steps.agent_id]
+        if USES_OBS:
+            task_data = [(id, decision_steps , Models, steps, best) for id in decision_steps.agent_id]
+        # Crear un pool de procesos y distribuir el trabajo
+        with multiprocessing.Pool(processes=multiprocessing.cpu_count()) as pool:
+            result = pool.starmap(process_agent, task_data)
 
-                Lasers = np.concatenate((Lasers, height), axis=1)
+        test = True
 
-                network_input = Lasers.flatten()
-                
-                if USES_OBS:
-                    flattened_obs_history = np.concatenate([action.flatten() for action in obs_history[id]])
-                    network_input = np.concatenate([network_input, flattened_obs_history])
+        Movements = result[0][1]
+        grid_score = CalculateGridScore(0)
+        explored_zones_score = CalculateExploredZones(0)
+        crash_penalty = int(Models[0].crashed) * w_crash_penalty
+        proximy_penalty = ProximityPenalties[0]
+        movement_score = MovementScores[0]
+        Scores[0] = CalculateScore(grid_score, explored_zones_score, movement_score, proximy_penalty, crash_penalty)
 
-                if USES_ACT:
-                    flattened_act_history = np.concatenate([action.flatten() for action in act_history[id]])
-                    network_input = np.concatenate([network_input, flattened_act_history])
-
-                network_input = network_input.reshape(1, -1)
-                Tensor = tf.constant(network_input)
-                
-                pred = Models[id].prediction(Tensor)
-
-                pred_array = pred.numpy().flatten()
-
-                # CalculateMovementScore(id, pred_array)
-
-                if USES_OBS:
-                    obs_history[id].append(Lasers)  # Add the new action
-
-                    if len(obs_history[id]) >= N_OBS:
-                        obs_history[id].pop(0)  # Remove the oldest action if we already have n actions
-
-                if USES_ACT:
-                    act_history[id].append(pred_array)  # Add the new action
-
-                    if len(act_history[id]) >= N_ACTIONS:
-                        act_history[id].pop(0)  # Remove the oldest action if we already have n actions
-
-                state = decision_steps[id][0][9]
-                posX = state[0]
-                posZ = state[2]
-                
-                UpdateZonesAndGrid(id, posX, posZ)
-
-                dist_center = decision_steps[id][0][8][1]
-                dist_left = decision_steps[id][0][8][3]
-                dist_right = decision_steps[id][0][8][5]
-
-                #CalculateDistancePenalty(id, dist_center, dist_left, dist_right)
-                
-                if state[3] == 0:
-                    Crashed[id] = 0
-                    Models[id].crashed = True
-                    NumCrashed += 1
-                    
-            else:
-                pred = np.array([[0, 0]], dtype = np.float32)
-            
-
-            if(Crashed[id] == 0):
-                pred = np.concatenate((pred, np.array([[0.1]])), axis=1)
-            elif(id == 0 and steps < 11):
-                pred = np.concatenate((pred, np.array([[0.2]])), axis=1)
-            elif(Crashed[camera] == 0 and id == best):
-                pred = np.concatenate((pred, np.array([[0.2]])), axis=1)
-                camera = id
-            elif(id < EliteSize):
-                pred = np.concatenate((pred, np.array([[0.3]])), axis=1)    
-            else:
-                pred = np.concatenate((pred, np.array([[0]])), axis=1)
-
-            if len(Movements[0]) == 0:
-                Movements = pred
-            else:
-                newMovement = pred
-                Movements = np.concatenate((Movements, newMovement), axis=0)
-        
-        for i in range(len(Scores)):
+        for i in range(1, len(result)):
+            newMovement = result[i][1]
+            Movements = np.concatenate((Movements, newMovement), axis=0)
             grid_score = CalculateGridScore(i)
             explored_zones_score = CalculateExploredZones(i)
             crash_penalty = int(Models[i].crashed) * w_crash_penalty
@@ -543,7 +571,7 @@ def TrainPopulation(env, behavior_name, spec):
                 if(bestScore < Scores[i] and Crashed[i] == 1):
                     bestScore = Scores[i]
                     best = i
-            print("Step: " + str(steps) + " \t| Crashed: " + str(NumCrashed) + "\t|Best Drone: " + str(best) + "\t|Score of the Best : " + "%.2f" % bestScore + "\t| Zone of the Best: " + str(Models[best].actual_zone) + "\t| Cells explored: " + str(Models[best].grid_score()))
+            print("Step: " + str(steps) + " \t| Crashed: " + str(NumCrashed) + "\t|Best Drone: " + str(best) + "\t|Score of the Best : " + "%.2f" % bestScore + "\t| Zone of the Best: " + str(max(Models[best].explored_zones)) + "\t| Cells explored: " + str(Models[best].grid_score()))
             
         steps = steps + 1
         
@@ -599,7 +627,7 @@ def ShowPopulationElite(env, behavior_name, spec):
         Movements = [[]]
         
         for id in decision_steps.agent_id:
-            
+                
             if(Crashed[id] == 1):
                 
                 Lasers = np.atleast_2d([])
@@ -760,9 +788,9 @@ def Train():
         NewGeneration()
 
     channel = EngineConfigurationChannel()
-    channel.set_configuration_parameters(height=1280, width=960)
+    channel.set_configuration_parameters(height=1024, width=1024, time_scale=10.0)
         
-    env = UnityEnvironment(file_name=FILE_NAME, seed=random.randint(0, 255), no_graphics=NO_GRAPH, side_channels=[channel])
+    env = UnityEnvironment(file_name=FILE_NAME, seed=1, no_graphics=NO_GRAPH, side_channels=[channel])
     env.reset()
     time.sleep(5)
 
@@ -812,7 +840,7 @@ def ShowPopulation():
 
     
     channel = EngineConfigurationChannel()
-    channel.set_configuration_parameters(height=1280, width=960)
+    channel.set_configuration_parameters(height=1024, width=1024)
         
     env = UnityEnvironment(file_name="CasaEntrenoTest.x86_64", seed=1, side_channels=[channel])
     env.reset()
