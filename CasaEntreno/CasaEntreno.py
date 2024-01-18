@@ -73,7 +73,7 @@ NumZones = 0
 MaxDistance = 0.55
 
 ## Score weights
-w_grid_score = 1
+w_grid_score = 300
 w_zones_score = 100
 w_movement_score = 0.01
 
