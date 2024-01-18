@@ -5,6 +5,7 @@
 **/*_Data/*
 **/MonoBleedingEdge/*
 
+**/.plastic/*
 
 CasaEntreno/coche_unity_neat.py
 CasaEntreno/Entrenar_neat.py
