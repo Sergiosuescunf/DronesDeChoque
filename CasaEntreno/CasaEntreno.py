@@ -122,7 +122,7 @@ else:
     Grid_coordinates = [-12.0, -27.0, 36.0, 15.0]
 
 # Save directory
-directory = f"Elite_simple_{N_OBS}_obs_{N_ACTIONS}_act_dinamic_arquitecture/Experiment2/"
+directory = f"Elite_simple_{N_OBS}_obs_{N_ACTIONS}_act_dinamic_arquitecture/Experiment3/"
 
 # Model
 def create_model():
@@ -474,7 +474,7 @@ def TrainPopulation(env, behavior_name, spec):
 
                 pred_array = pred.numpy().flatten()
 
-                CalculateMovementScore(id, pred_array)
+                #CalculateMovementScore(id, pred_array)
 
                 if USES_OBS:
                     obs_history[id].append(Lasers)  # Add the new action
@@ -498,7 +498,7 @@ def TrainPopulation(env, behavior_name, spec):
                 dist_left = decision_steps[id][0][8][3]
                 dist_right = decision_steps[id][0][8][5]
 
-                # CalculateDistancePenalty(id, dist_center, dist_left, dist_right)
+                #CalculateDistancePenalty(id, dist_center, dist_left, dist_right)
                 
                 if state[3] == 0:
                     Crashed[id] = 0
@@ -765,7 +765,7 @@ def Train():
     channel = EngineConfigurationChannel()
     channel.set_configuration_parameters(height=1280, width=960)
         
-    env = UnityEnvironment(file_name=FILE_NAME, seed=1, no_graphics=NO_GRAPH, side_channels=[channel])
+    env = UnityEnvironment(file_name=FILE_NAME, seed=random.randint(0,255), no_graphics=NO_GRAPH, side_channels=[channel])
     env.reset()
     time.sleep(5)
 
