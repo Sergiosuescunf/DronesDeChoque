@@ -5,7 +5,7 @@ os_name = os.name
 if os_name == 'posix':
     PYTHON_COMMAND = 'python3'
 elif os_name == 'nt':
-    FILE_NAME = 'python.exe'
+    PYTHON_COMMAND = 'python.exe'
 
 print('Entrenando modelo')
 
