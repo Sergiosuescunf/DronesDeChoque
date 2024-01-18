@@ -198,3 +198,13 @@ Generation: 197 | Drone: 2 | Score: 53.56913512392178 | Explored Cells: 134 of 9
 Generation: 198 | Drone: 70 | Score: 53.280364777776896 | Explored Cells: 128 of 900 total cells
 Generation: 199 | Drone: 2 | Score: 54.193838501373925 | Explored Cells: 141 of 900 total cells
 Generation: 200 | Drone: 1 | Score: 53.81997096002102 | Explored Cells: 135 of 900 total cells
+Generation: 1 | Drone: 26 | Score: 0.9305174885193506 | Explored Cells: 6 of 900 total cells
+Generation: 2 | Drone: 33 | Score: 1.0703673846854105 | Explored Cells: 8 of 900 total cells
+Generation: 1 | Drone: 47 | Score: 0.9670403358009125 | Explored Cells: 7 of 900 total cells
+Generation: 2 | Drone: 18 | Score: 1.0183345272805955 | Explored Cells: 7 of 900 total cells
+Generation: 3 | Drone: 79 | Score: 25.927995804217126 | Explored Cells: 7 of 900 total cells
+Generation: 1 | Drone: 41 | Score: -49.912869390977754 | Explored Cells: 1 of 900 total cells
+Generation: 2 | Drone: 41 | Score: 1.0261909380224015 | Explored Cells: 7 of 900 total cells
+Generation: 3 | Drone: 82 | Score: 1.1511706006526947 | Explored Cells: 9 of 900 total cells
+Generation: 4 | Drone: 80 | Score: 1.0932978547943963 | Explored Cells: 8 of 900 total cells
+Generation: 5 | Drone: 2 | Score: 1.1447732895612717 | Explored Cells: 9 of 900 total cells
