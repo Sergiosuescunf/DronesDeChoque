@@ -207,10 +207,7 @@ def CalculateGridScore(id):
     return w_grid_score * (Models[id].grid_score()/Models[id].total_cells())
 
 def CalculateExploredZones(id):
-    if len(Models[id].explored_zones) == 1:
-        return 0
-    
-    return w_zones_score * (NumZones - len(Models[id].explored_zones)-1)/NumZones
+    return w_zones_score * (len(Models[id].explored_zones)/NumZones)
 
 def CalculateScore(grid_score, explored_zones_score, movement_score, proximy_penalty, crashed_penalty):
     return grid_score + explored_zones_score + movement_score - crashed_penalty - proximy_penalty
@@ -474,7 +471,7 @@ def TrainPopulation(env, behavior_name, spec):
 
                 pred_array = pred.numpy().flatten()
 
-                CalculateMovementScore(id, pred_array)
+                # CalculateMovementScore(id, pred_array)
 
                 if USES_OBS:
                     obs_history[id].append(Lasers)  # Add the new action
@@ -765,7 +762,7 @@ def Train():
     channel = EngineConfigurationChannel()
     channel.set_configuration_parameters(height=1280, width=960)
         
-    env = UnityEnvironment(file_name=FILE_NAME, seed=1, no_graphics=NO_GRAPH, side_channels=[channel])
+    env = UnityEnvironment(file_name=FILE_NAME, seed=random.randint(0, 255), no_graphics=NO_GRAPH, side_channels=[channel])
     env.reset()
     time.sleep(5)
 
