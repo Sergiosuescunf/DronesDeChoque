@@ -8,6 +8,7 @@ class Drone:
         self.model = modelo
         self.grid = Grid(grid_coordinates[0], grid_coordinates[1], grid_coordinates[2], grid_coordinates[3], GRID_SIZE)
         self.explored_zones = []
+        self.actual_zone = 0
         self.crashed = False
 
     def save_model(self, filename):
