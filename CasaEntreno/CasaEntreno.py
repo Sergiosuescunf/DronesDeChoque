@@ -130,7 +130,7 @@ def create_model():
     bias_init = tf.keras.initializers.he_uniform()
     activation_func = tf.nn.relu
 
-    n_inputs = 78 * (N_OBS+1) + N_ACTIONS * N_INPUTS
+    n_inputs = 78 * (N_OBS+1) + N_ACTIONS  * N_INPUTS
     n_intermediate_inputs =  32
     n_intermediate_inputs_2 = 16
   
