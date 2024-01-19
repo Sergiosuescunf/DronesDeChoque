@@ -122,7 +122,7 @@ else:
     Grid_coordinates = [-12.0, -27.0, 36.0, 15.0]
 
 # Save directory
-directory = f"Elite_simple_{N_OBS}_obs_{N_ACTIONS}_act_dinamic_arquitecture/Experiment2/"
+directory = f"Elite_simple_{N_OBS}_obs_{N_ACTIONS}_act_dinamic_arquitecture/Experiment3/"
 
 # Model
 def create_model():
@@ -495,7 +495,7 @@ def TrainPopulation(env, behavior_name, spec):
                 dist_left = decision_steps[id][0][8][3]
                 dist_right = decision_steps[id][0][8][5]
 
-                # CalculateDistancePenalty(id, dist_center, dist_left, dist_right)
+                #CalculateDistancePenalty(id, dist_center, dist_left, dist_right)
                 
                 if state[3] == 0:
                     Crashed[id] = 0

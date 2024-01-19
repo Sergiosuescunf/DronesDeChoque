@@ -1,0 +1,1 @@
+Generation: 1 | Drone: 95 | Score: 0.06888888888888889 | Explored Cells: 62 of 900 total cells
