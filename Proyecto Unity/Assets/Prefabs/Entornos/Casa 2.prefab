@@ -713,7 +713,7 @@ GameObject:
   - component: {fileID: 1902746545955582559}
   - component: {fileID: 3010305484146659451}
   m_Layer: 0
-  m_Name: PosInicial
+  m_Name: SpawnPoint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

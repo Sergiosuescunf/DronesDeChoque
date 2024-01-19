@@ -56,7 +56,10 @@ public class Dron : Agent
         if (!spawn_reset)
         {
             spawn_reset = true;
-            SpawnPos.GetComponentInParent<SpawnRandom>().SetRandomSpawn();
+            try {
+                SpawnPos.GetComponentInParent<SpawnRandom>().SetRandomSpawn();
+            }
+            catch {}
         }
 
         aux_fb = 0f;
