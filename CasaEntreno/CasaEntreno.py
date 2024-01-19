@@ -122,7 +122,7 @@ else:
     Grid_coordinates = [-12.0, -27.0, 36.0, 15.0]
 
 # Save directory
-directory = f"Elite_simple_{N_OBS}_obs_{N_ACTIONS}_act_dinamic_arquitecture/Experiment3/"
+directory = f"Elite_simple_{N_OBS}_obs_{N_ACTIONS}_act_dinamic_arquitecture/Experiment2/"
 
 # Model
 def create_model():
