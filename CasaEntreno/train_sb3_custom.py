@@ -12,6 +12,7 @@ from mlagents_envs.side_channel.engine_configuration_channel import EngineConfig
 import gymnasium as gym
 from CasaGymEnv import CasaGymEnv
 from stable_baselines3 import PPO, SAC
+from stable_baselines3.common.buffers import RolloutBuffer
 from stable_baselines3.common.utils import obs_as_tensor, safe_mean
 from stable_baselines3.common.evaluation import evaluate_policy
 import torch
@@ -28,27 +29,29 @@ def main():
 
     # Parse arguments
     parser = argparse.ArgumentParser(description='Test Unity Environment')
-    parser.add_argument('--env', type=str, default='CasaEntrenoRL.x86_64', help='Path to the Unity executable to test')
+    parser.add_argument('--env', type=str, default='CasaEntreno.x86_64', help='Path to the Unity executable to test')
     parser.add_argument('--seed', type=int, default=SEED, help='Random seed')
     parser.add_argument('--render', type=bool, default=True, help='Display the Unity environment')
-    parser.add_argument('--n_envs', type=int, default=1, help='Number of parallel environments for training')
+    parser.add_argument('--n_envs', type=int, default=100, help='Number of parallel environments for training')
     parser.add_argument('--n_epochs', type=int, default=200, help='Number of learning epochs')
+    parser.add_argument('--n_steps', type=int, default=2000, help='Number of steps per epoch')
     parser.add_argument('--device', type=str, default='auto', help='Device for running training (cpu, cuda or auto)')
 
     # Get arguments
     args = parser.parse_args()
     env_name = args.env
     seed = args.seed
-    render = args.render
+    render = not args.render
     n_envs = args.n_envs
     n_epochs = args.n_epochs
+    n_steps = args.n_steps
     device = args.device
 
     # Load Unity Environment
     channel = EngineConfigurationChannel()
-    channel.set_configuration_parameters(height=1024, width=1024, time_scale=5.0)
+    channel.set_configuration_parameters(height=1024, width=1024, time_scale=1.0)
     
-    unity_env = UnityEnvironment(file_name=env_name, seed=seed, no_graphics=not render, side_channels=[channel])
+    unity_env = UnityEnvironment(file_name=env_name, seed=seed, no_graphics=render, side_channels=[channel])
     unity_env.reset()
     time.sleep(5)
     # Wrap Unity environment in a gym wrapper
@@ -59,7 +62,7 @@ def main():
 
     policy_kwargs = dict(activation_fn = torch.nn.ReLU,
                          net_arch=dict(pi=[32,16], vf=[64,64]))
-    model = PPO("MlpPolicy", env, n_steps=2000, batch_size=2000, tensorboard_log=save_dir + 'logs/' ,policy_kwargs=policy_kwargs, verbose=1, device=device)
+    model = PPO("MlpPolicy", env, n_steps=n_steps, batch_size=2000, tensorboard_log=save_dir + 'logs/' ,policy_kwargs=policy_kwargs, verbose=1, device=device)
     '''
     policy_kwargs = dict(net_arch=dict(pi=[32,16], qf=[256,256]))
     model = SAC("MlpPolicy", env, train_freq=2000, batch_size=2000, policy_kwargs=policy_kwargs, verbose=1, device=device)
@@ -70,9 +73,20 @@ def main():
 
     iteration = 0
     log_interval = 1
+    # Create custom rollout buffer and overwrite the default one in PPO model
+    buffer = RolloutBuffer(
+        model.n_steps,
+        model.observation_space,
+        model.action_space,
+        model.device,
+        model.gamma,
+        model.gae_lambda,
+        n_envs,        
+    )
+    model.rollout_buffer = buffer
 
     total_timesteps, callback = model._setup_learn(
-        total_timesteps=n_epochs*model.n_steps*n_envs,
+        total_timesteps=n_epochs*model.n_steps,
         callback=None,
         tb_log_name=datetime.time().strftime("%Y%m%d-%H%M%S"),
         reset_num_timesteps=True,
@@ -82,12 +96,13 @@ def main():
     callback.on_training_start(locals(), globals())
     assert model.env is not None
     # Main training loop
-    while model.num_timesteps < total_timesteps:    
+    while model.num_timesteps < total_timesteps*n_envs:    
         print('-----------------------------------')
         print('Epoch: ' + str(iteration))
         assert model._last_obs is not None, "No previous observation was provided"
         # Switch to eval mode (this affects batch norm / dropout)
         model.policy.set_training_mode(False)
+        print(model.num_timesteps)
 
         n_steps = 0
         model.rollout_buffer.reset()
@@ -102,11 +117,21 @@ def main():
                 # Sample a new noise matrix
                 model.policy.reset_noise(model.env.num_envs)
 
-            # Predict next action
-            with torch.no_grad():
-                obs_t = obs_as_tensor(model._last_obs, model.device)
-                actions, values, log_probs = model.policy(obs_t)
-            actions = actions.cpu().numpy()
+            # Predict next actions
+            actions = np.zeros((n_envs, 2), dtype=np.float32)
+            values = torch.from_numpy(np.zeros((n_envs, 1), dtype=np.float32))
+            log_probs = torch.from_numpy(np.zeros((n_envs, 1), dtype=np.float32))
+            for id in range(n_envs):
+                with torch.no_grad():
+                    obs_t = obs_as_tensor(model.env.envs[0].last_observations[id], model.device)
+                    actions_t, values_id, log_probs_id = model.policy(obs_t.reshape(1, -1))
+                actions[id] = actions_t.cpu().numpy()
+                values[id] = values_id
+                log_probs[id] = log_probs_id
+                # Rescale and perform actions
+                clipped_action = np.clip(actions[id], model.action_space.low, model.action_space.high)
+                # Set the actions in the environment
+                model.env.envs[0].set_action_id(id, clipped_action)
 
             #Rescale and perform actions
             clipped_actions = actions
@@ -118,7 +143,7 @@ def main():
             
             # Execute next action
             new_obs, rewards, dones, infos = env.step(clipped_actions)
-            model.num_timesteps += model.env.num_envs
+            model.num_timesteps += n_envs
 
             # Give access to local variables
             callback.update_locals(locals())
@@ -126,7 +151,7 @@ def main():
                 continue_training = False
                 break
             
-            model._update_info_buffer(infos)
+            #model._update_info_buffer(infos)
             n_steps += 1
             # Handle timeouts by boostrapping with value function
             for idx, done in enumerate(dones):
@@ -140,18 +165,28 @@ def main():
                     rewards[idx] += model.gamma * terminal_value
 
             # Store data in buffer
+            #for id in range(n_envs):
+            #    print(model.rollout_buffer.pos)
+                # model.rollout_buffer.add(
+                #     model.env.envs[0].last_observations[id],
+                #     actions[id],
+                #     model.env.envs[0].last_rewards[id],
+                #     model.env.envs[0].dones[id],
+                #     values[id],
+                #     log_probs[id],
+                # )
             model.rollout_buffer.add(
-                model._last_obs,
+                model.env.envs[0].last_observations.reshape(n_envs,1,-1),
                 actions,
-                rewards,
-                model._last_episode_starts,
+                model.env.envs[0].last_rewards,
+                model.env.envs[0].dones,
                 values,
-                log_probs,
+                log_probs.reshape(n_envs,)
             )
             model._last_obs = new_obs
             model._last_episode_starts = dones
 
-            if np.sum(dones) == n_envs: # All drones crashed
+            if np.sum(model.env.envs[0].dones) == n_envs: # All drones crashed
                 env.reset()
         
         with torch.no_grad():
@@ -161,6 +196,9 @@ def main():
         model.rollout_buffer.compute_returns_and_advantage(last_values=values, dones=dones)
         callback.update_locals(locals())
         callback.on_rollout_end()
+
+        if not continue_training:
+            break
 
         # Update info
         iteration += 1
@@ -181,22 +219,24 @@ def main():
 
         # Update model
         model.train()
+        env.reset()
 
     callback.on_training_end()
     print("Training completed!")
-
-    # Evaluate model
-    print('Model evaluation starting...')
-    eval_env = CasaGymEnv(unity_env=unity_env, n_drones=1, seed=seed)
-    mean_rew, std_rew = evaluate_policy(model, eval_env, n_eval_episodes=10, deterministic=True, return_episode_rewards=True)
-    print('Model evaluation completed!')
-    print('Mean reward: ' + str(mean_rew))
-    print('Reward std: ' + str(std_rew))
 
     # Save the trained model
     saving_path = save_dir + env_name + '_' + 'PPO'
     print('Saving model at: ' + saving_path)
     model.save(saving_path)
+
+    # Evaluate model
+    print('Model evaluation starting...')
+    eval_env = CasaGymEnv(unity_env=unity_env, n_drones=1, seed=seed)
+    model = PPO.load(saving_path, env=eval_env)
+    mean_rew, std_rew = evaluate_policy(model, eval_env, n_eval_episodes=10, deterministic=True, return_episode_rewards=True)
+    print('Model evaluation completed!')
+    print('Mean reward: ' + str(mean_rew))
+    print('Reward std: ' + str(std_rew))
 
 if __name__ == '__main__':
     main()
