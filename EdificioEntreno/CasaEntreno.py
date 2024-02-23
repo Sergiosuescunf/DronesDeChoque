@@ -107,12 +107,7 @@ Penalties = []
 CurrentScore = 0
 PreviousScore = 0
 Crashed = []
-Grid_coordinates = []
-
-if args.train:
-    Grid_coordinates = [-14.0, -16.0, 16.0, 14.0]
-else:
-    Grid_coordinates = [-12.0, -27.0, 36.0, 15.0]
+Grid_coordinates = [-12.0, -27.0, 36.0, 15.0]
 
 # Save directory
 directory = f"Elite_simple_{N_OBS}_obs_{N_ACTIONS}_act_dinamic_arquitecture/Experiment2/"
@@ -144,23 +139,17 @@ def SetZones():
     
     Zones.clear()
 
-    if args.train:
-        Zones.append((-13, -6, -2, 0))
-        Zones.append((-13, -14, -2, -6))
-        Zones.append((-2, -14, 15, 0))
-        Zones.append((-13, 0, 15, 13))
-    else:
-        Zones.append((-6, -3, 0, 3))
-        Zones.append((-12, -15, -6, -3))
-        Zones.append((-12, -27, 0, -3))
-        Zones.append((0, -27, 18, -9))
-        Zones.append((18, -27, 30, -15))
-        Zones.append((24, -15, 36, -9))
-        Zones.append((24, -9, 36, 3))
-        Zones.append((18, 3, 36, 15))
-        Zones.append((12, 3, 18, 15))
-        Zones.append((0, 3, 12, 15))
-        Zones.append((9, -3, 18, 3))
+    Zones.append((-6, -3, 0, 3))
+    Zones.append((-12, -15, -6, -3))
+    Zones.append((-12, -27, 0, -3))
+    Zones.append((0, -27, 18, -9))
+    Zones.append((18, -27, 30, -15))
+    Zones.append((24, -15, 36, -9))
+    Zones.append((24, -9, 36, 3))
+    Zones.append((18, 3, 36, 15))
+    Zones.append((12, 3, 18, 15))
+    Zones.append((0, 3, 12, 15))
+    Zones.append((9, -3, 18, 3))
 
     NumZones = len(Zones)
         
